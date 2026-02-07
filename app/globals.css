@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (min-width: 1024px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 700px at 12% -8%, rgba(73, 136, 196, 0.55), transparent 55%),
+    radial-gradient(900px 600px at 92% 4%, rgba(189, 232, 245, 0.45), transparent 60%),
+    linear-gradient(180deg, #0f2854 0%, #1c4d8d 50%, #0f2854 100%);
+  color: #f6fbfe;
+}
+
+* {
+  scroll-margin-top: 96px;
+}
+
+::selection {
+  background: rgba(59, 130, 246, 0.45);
+  color: #f8fafc;
+}
+
+.glass {
+  backdrop-filter: blur(18px);
+  background: linear-gradient(135deg, rgba(15, 40, 84, 0.72), rgba(28, 77, 141, 0.4));
+}
+
+.grid-overlay {
+  background-size: 48px 48px;
+}
+
+.pulse-ring {
+  box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  animation: pulse-ring 2.8s ease-out infinite;
+}
+
+.cursor-blink::after {
+  content: "▋";
+  margin-left: 2px;
+  color: #60a5fa;
+  animation: blink 1.1s steps(1) infinite;
+}
+
+.float-slow {
+  animation: float-slow 10s ease-in-out infinite;
+}
+
+.scanline {
+  background: linear-gradient(
+    180deg,
+    rgba(59, 130, 246, 0) 0%,
+    rgba(59, 130, 246, 0.12) 50%,
+    rgba(59, 130, 246, 0) 100%
+  );
+  animation: scanline 6s linear infinite;
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-120%);
+  }
+  100% {
+    transform: translateY(220%);
+  }
+}
