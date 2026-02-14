@@ -2,114 +2,145 @@
 
 import { useEffect, useState } from "react";
 
+// Contact Information
+const CONTACT_EMAIL = "nattavee123vee@gmail.com";
+const SOCIAL_LINKS = {
+  linkedin: "https://linkedin.com/in/mossnattavee",
+  portfolio: "https://portfolio.nattavee.com",
+};
+
 const navItems = [
   { id: "top", label: "Overview" },
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "projects", label: "Projects" },
+  { id: "experience", label: "Experience" }, // Renamed from specific ID to generic to match flow
   { id: "contact", label: "Contact" }
 ];
 
+// Calculated from 04/2024 (Intern) to Present
 const stats = [
-  { label: "Experience", value: "8+ yrs", detail: "Platform & DevOps" },
-  { label: "Projects", value: "35+", detail: "Production systems" },
-  { label: "Focus", value: "Reliability", detail: "SLO-driven" }
+  { label: "Experience", value: "1+ Years", detail: "System Engineer & DevOps" },
+  { label: "Certifications", value: "5+", detail: "Nutanix, Kubernetes, Security" },
+  { label: "Focus", value: "Infra", detail: "Virtualization & Cloud Native" }
 ];
 
+// Derived from Systems Engineer responsibilities
 const valueCards = [
   {
-    title: "Execution Clarity",
-    detail: "Translate complex systems into clear, calm execution plans."
+    title: "Infrastructure Stability",
+    detail: "Manage high-availability Nutanix and VMware clusters for mission-critical workloads."
   },
   {
-    title: "Secure Delivery",
-    detail: "Keep teams shipping with secure-by-default pipelines."
+    title: "Cloud-Native Delivery",
+    detail: "Implement Kubernetes platforms and GitOps workflows for scalable application deployment."
   },
   {
-    title: "Trust at Scale",
-    detail: "Build platforms people trust to run their business."
+    title: "Observability",
+    detail: "Develop monitoring pipelines (Prometheus/Grafana) to reduce MTTR and ensure system health."
   }
 ];
 
+// Exact technical skills from resume
 const skills = [
-  "Linux / Ubuntu",
   "Kubernetes",
+  "Nutanix (NKP)",
+  "VMware (ESXi/vCenter)",
   "Docker",
-  "Terraform",
+  "Argo CD",
   "GitHub Actions",
   "Helm",
-  "Nginx / Envoy",
   "Prometheus / Grafana",
-  "OpenTelemetry",
-  "PostgreSQL",
-  "Redis",
-  "Vault",
-  "AWS",
-  "GCP",
-  "Ansible",
+  "Zabbix",
+  "OpenSearch",
+  "Linux / Ubuntu",
+  "Ansible / Kubespray",
+  "FortiGate Firewall",
+  "Cisco Switching",
+  "Cloudflare",
   "Python / Bash"
 ];
 
+// Mapped from Projects and Freelance work
 const projects = [
   {
-    title: "Multi-Region Platform",
+    title: "Freelance E-learning Platform",
     description:
-      "Standardized a Kubernetes platform across 3 regions with automated canary releases and policy gates."
+      "Designed a K3s-based cluster with Harbor registry, Argo CD GitOps workflows, and GitHub Actions pipelines for a modern learning platform."
   },
   {
-    title: "Zero-Trust Network",
+    title: "Network Monitoring Capstone",
     description:
-      "Delivered OIDC-based access, service mesh auth, and network segmentation for compliance readiness."
+      "Implemented a centralized monitoring system using Zabbix, Prometheus, Grafana, and OpenSearch for comprehensive network alerting."
   },
   {
-    title: "Observability Upgrade",
+    title: "Personal Homelab Infrastructure",
     description:
-      "Unified logs, metrics, and traces with OpenTelemetry, reducing MTTR and alert fatigue."
+      "Operates a self-hosted Proxmox cluster with network segmentation (FortiGate) and a personal Kubernetes portfolio site."
   },
   {
-    title: "CI/CD Modernization",
+    title: "Lab Network Infrastructure",
     description:
-      "Built a GitOps delivery flow with automated rollback and reliability checks."
+      "Designed network infrastructure for university labs, including FortiGate firewalls, Cisco switches, and virtualization environments."
   }
 ];
 
+// Career Timeline
 const experience = [
   {
-    role: "Senior DevOps Engineer",
-    company: "CloudScale Labs",
-    period: "2022 – Present",
-    detail: "Lead platform reliability and delivery automation for SaaS products."
-  },
-  {
-    role: "Site Reliability Engineer",
-    company: "Fintech Nova",
-    period: "2019 – 2022",
-    detail: "Built incident response playbooks and observability systems for payment APIs."
-  },
-  {
     role: "Systems Engineer",
-    company: "InfraWorks",
-    period: "2016 – 2019",
-    detail: "Modernized legacy infrastructure with IaC and container platforms."
+    company: "Zenith Comp Co., Ltd.",
+    period: "04/2025 – Present",
+    detail: "Manage Nutanix/VMware clusters, implement Kubernetes platforms, and improve configuration management for system stability."
+  },
+  {
+    role: "Freelance DevOps",
+    company: "E-learning Platform",
+    period: "07/2025 – 09/2025",
+    detail: "Implemented K3s clusters, private registries (Harbor), and CI/CD pipelines using GitHub Actions and Argo CD."
+  },
+  {
+    role: "IT Support & TA",
+    company: "KMUTNB",
+    period: "07/2024 – 04/2025",
+    detail: "Maintained lab systems, deployed engineering software (ANSYS, CATIA), and designed network infrastructure for student labs."
+  },
+  {
+    role: "Network Engineer Intern",
+    company: "AUSTON ICT Solution",
+    period: "04/2024 – 06/2024",
+    detail: "Executed firewall migrations (FortiGate), configured Cisco infrastructure, and optimized security policies."
   }
 ];
 
+// 
 const certifications = [
-  "AWS Certified Solutions Architect",
-  "Certified Kubernetes Administrator (CKA)",
-  "HashiCorp Terraform Associate",
-  "Google Professional Cloud Architect"
+  "Kubernetes and Cloud Native Associate (KCNA)",
+  "Nutanix Certified Professional - Cloud Native 6",
+  "Nutanix Certified Professional - Multicloud Infrastructure 6",
+  "Certified in Cybersecurity (CC) - ISC2",
+  "Fortinet Certified Associate in Cybersecurity"
 ];
+
+// Grouped Skills
 const toolchain = [
-  "Kubernetes",
-  "Docker",
-  "Terraform",
-  "GitOps",
-  "Observability",
-  "Zero Trust",
-  "Cloud Networking",
-  "SRE Practices"
+  "Kubernetes & Docker",
+  "Nutanix & VMware",
+  "GitOps (Argo CD)",
+  "CI/CD (GitHub Actions)",
+  "Observability (Grafana)",
+  "Network Security",
+  "Cloudflare",
+  "Infrastructure as Code"
 ];
+
+// 
+const education = {
+  degree: "Bachelor of Engineering in Computer Engineering",
+  school: "King Mongkut's University of Technology North Bangkok",
+  gpa: "GPA: 3.26",
+  year: "Graduated: 04/2025"
+};
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("top");
@@ -175,11 +206,12 @@ export default function Home() {
         <div className="scanline absolute left-0 top-0 h-[35%] w-full opacity-50" />
       </div>
 
+      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/15 bg-[#0f2854]/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <a href="#top" className="flex items-center gap-3 text-sm font-semibold tracking-[0.2em] text-slate-200">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg text-ink-200">
-              SE
+              NN
             </span>
             <span className="hidden sm:inline">SYSTEMS ENGINEER</span>
           </a>
@@ -208,27 +240,28 @@ export default function Home() {
       </header>
 
       <main className="relative mx-auto max-w-6xl px-6">
+        
+        {/* HERO SECTION */}
         <section id="top" className="snap-start pb-20 pt-20 sm:pt-28">
           <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
               <div className="flex items-center gap-5">
                 <div className="relative h-20 w-20 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]">
                   <div className="flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] text-2xl font-semibold text-white">
-                    YN
+                    NN
                   </div>
                 </div>
                 <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-ink-200">DevOps · SRE · Systems Engineer</p>
-                  <p className="mt-1 text-sm text-slate-200/80">Based Remote · Open for collaborations</p>
+                <p className="text-xs uppercase tracking-[0.35em] text-ink-200">Systems Engineer · DevOps</p>
+                  <p className="mt-1 text-sm text-slate-200/80">Bangkok, Thailand · Open for collaborations</p>
                 </div>
               </div>
 
               <h1 className="mt-8 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
-                Hi, I'm <span className="text-ink-200">Your Name</span>. I build resilient platforms for teams that run at scale.
+                Hi, I'm <span className="text-ink-200">Nattavee Narischat</span>. I build resilient infrastructure for modern applications.
               </h1>
               <p className="mt-6 max-w-xl text-lg text-slate-100/85">
-                DevOps, SRE, and systems engineering focused on high-availability, incident readiness, and production-grade
-                delivery pipelines. Calm operations, strong guarantees.
+                Systems Engineer specializing in Nutanix, VMware, and Kubernetes. I bridge the gap between traditional infrastructure and cloud-native platforms with a focus on stability and automation.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <button
@@ -255,13 +288,15 @@ export default function Home() {
               </div>
               <div className="mt-8 flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-ink-100">
                 <a
-                  href="https://github.com/yourhandle"
+                  href={SOCIAL_LINKS.portfolio}
+                  target="_blank"
                   className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 transition hover:border-white/50 hover:bg-white/20"
                 >
-                  GitHub
+                  Portfolio
                 </a>
                 <a
-                  href="https://linkedin.com/in/yourhandle"
+                  href={SOCIAL_LINKS.linkedin}
+                  target="_blank"
                   className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 transition hover:border-white/50 hover:bg-white/20"
                 >
                   LinkedIn
@@ -297,77 +332,78 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ABOUT SECTION */}
         <section id="about" className="snap-start py-20">
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
             <div className="rounded-3xl border border-white/15 bg-white/10 p-8">
               <div className="flex items-center gap-6">
                 <div className="float-slow relative h-28 w-28 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]">
                   <div className="flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] text-4xl font-semibold text-white">
-                    YN
+                    NN
                   </div>
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Systems Engineer</p>
-                  <h3 className="mt-2 text-2xl font-semibold text-white">Your Name</h3>
-                  <p className="mt-1 text-sm text-slate-100/85">DevOps · Platform · Reliability</p>
+                  <h3 className="mt-2 text-2xl font-semibold text-white">Nattavee Narischat</h3>
+                  <p className="mt-1 text-sm text-slate-100/85">Cloud-Native · Infrastructure · Security</p>
                 </div>
               </div>
               <div className="mt-6 space-y-4 text-sm text-slate-100/85">
                 <p>
-                  I help teams ship with confidence by building infrastructure that is secure, observable, and easy to evolve.
+                  I help organizations maintain robust IT infrastructure while navigating the transition to containerized environments.
                 </p>
                 <p>
-                  My focus is on high-availability systems, automation-first operations, and clear reliability metrics.
+                  My expertise lies in managing lifecycle management for Nutanix and VMware clusters, while simultaneously architecting Kubernetes solutions for cloud-native workloads.
                 </p>
               </div>
               <div className="mt-6 grid gap-4 text-xs uppercase tracking-[0.2em] text-ink-100 sm:grid-cols-2">
                 <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
-                  <p className="text-white">Location</p>
-                  <p className="mt-2">Remote / Global</p>
+                  <p className="text-white">Education</p>
+                  <p className="mt-2 capitalize">{education.school}</p>
+                  <p className="mt-1 text-slate-400">{education.degree}</p>
                 </div>
                 <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
                   <p className="text-white">Focus</p>
-                  <p className="mt-2">Cloud Infrastructure</p>
+                  <p className="mt-2">Platform Engineering</p>
                 </div>
               </div>
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-ink-200">About</p>
               <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">
-                I build platforms that feel invisible because they just work.
+                Turning complex requirements into stable, observable systems.
               </h2>
               <p className="mt-6 text-lg text-slate-100/85">
-                My work centers on reliability, automation, and a product-first approach to infrastructure. I help teams
-                deliver safely at speed, using secure-by-default patterns and continuous verification.
+                My work centers on two pillars: Reliability and Modernization. I maintain traditional virtualization platforms that businesses rely on, while building the GitOps and Kubernetes foundations for the future.
               </p>
               <p className="mt-4 text-lg text-slate-100/85">
-                From blueprinting cloud foundations to tuning observability pipelines, I turn complexity into clean
-                operational systems that teams trust.
+                From configuring FortiGate firewalls to deploying Argo CD pipelines, I ensure infrastructure is not just operational, but secure and efficient.
               </p>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
                   <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Now</p>
-                  <p className="mt-3 text-sm text-slate-100/85">Leading platform reliability for fintech & SaaS teams.</p>
+                  <p className="mt-3 text-sm text-slate-100/85">Systems Engineer at Zenith Comp Co., Ltd.</p>
                 </div>
                 <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
                   <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Previously</p>
-                  <p className="mt-3 text-sm text-slate-100/85">Cloud migrations, IaC modernization, and observability upgrades.</p>
+                  <p className="mt-3 text-sm text-slate-100/85">Network Engineer Intern & IT Support roles.</p>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
+        {/* SKILLS SECTION */}
         <section id="skills" className="snap-start py-20">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Skills</p>
               <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">
-                DevOps, SRE, and systems engineering toolkit.
+                Technical Expertise & Toolchain
               </h2>
             </div>
             <p className="max-w-xl text-sm text-slate-300">
-              A focused toolchain for reliability engineering, automation, and secure cloud delivery.
+               A comprehensive toolkit covering Cloud-Native Platforms, Virtualization, CI/CD, and Observability solutions.
             </p>
           </div>
           <div className="mt-10 flex flex-wrap gap-3">
@@ -390,46 +426,48 @@ export default function Home() {
           </div>
         </section>
 
+        {/* PROJECTS SECTION */}
         <section id="projects" className="snap-start py-20">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Projects</p>
-              <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">Flagship work and outcomes.</h2>
+              <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">Featured Implementations</h2>
             </div>
             <p className="max-w-xl text-sm text-slate-300">
-              A snapshot of real infrastructure work that improved performance, reliability, and developer experience.
+              Real-world application of infrastructure code, networking, and security principles.
             </p>
           </div>
           <div className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+            {/* Featured Project - Freelance Work */}
             <div className="rounded-3xl border border-white/15 bg-gradient-to-br from-ink-400/30 via-[#0f2854]/80 to-[#0f2854] p-8">
               <p className="text-xs uppercase tracking-[0.3em] text-ink-200">Featured Project</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">Zero-Downtime Platform Migration</h3>
+              <h3 className="mt-4 text-2xl font-semibold text-white">E-learning Platform Infrastructure</h3>
               <p className="mt-4 text-sm text-slate-100/85">
-                Led the migration of 120+ services to a multi-region Kubernetes platform with GitOps delivery, policy
-                guardrails, and automated rollback. Reduced release risk while improving deployment velocity by 3x.
+                Designed and implemented a complete private cloud solution using K3s. Deployed Harbor for container registry management and established GitOps workflows via Argo CD to streamline application delivery.
               </p>
               <div className="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-slate-300">
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Kubernetes</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Terraform</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">GitOps</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">SRE</span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">K3s Kubernetes</span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Argo CD</span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Harbor</span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">GitHub Actions</span>
               </div>
             </div>
+            
+            {/* Featured Project - Homelab */}
             <div className="grid gap-6">
               <div className="rounded-3xl border border-white/15 bg-white/10 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Impact</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Homelab Thailand</p>
                 <div className="mt-4 space-y-3 text-sm text-slate-100/85">
-                  <p>99.99% availability on core services.</p>
-                  <p>3x faster release cadence with automated checks.</p>
-                  <p>Incident response reduced from 45m to 12m.</p>
+                  <p>Co-Founder of a technical community.</p>
+                  <p>Focused on self-hosting, networking, and infrastructure.</p>
+                  <p>Personal Proxmox & FortiGate environment.</p>
                 </div>
               </div>
               <div className="rounded-3xl border border-white/15 bg-white/10 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Highlights</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Capstone</p>
                 <div className="mt-4 space-y-3 text-sm text-slate-100/85">
-                  <p>Zero-downtime migration strategy.</p>
-                  <p>Compliance-ready audit trails.</p>
-                  <p>Unified observability across 4 regions.</p>
+                  <p>Centralized network monitoring system.</p>
+                  <p>Tech: Zabbix, Prometheus, Grafana, OpenSearch.</p>
                 </div>
               </div>
             </div>
@@ -447,10 +485,11 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="mt-14 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          {/* EXPERIENCE SECTION */}
+          <div id="experience" className="mt-14 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Experience</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">Career timeline.</h3>
+              <h3 className="mt-4 text-2xl font-semibold text-white">Professional Timeline.</h3>
               <div className="mt-6 space-y-4">
                 {experience.map((item) => (
                   <div key={item.role} className="rounded-3xl border border-white/15 bg-white/10 p-5">
@@ -466,9 +505,11 @@ export default function Home() {
                 ))}
               </div>
             </div>
+            
+            {/* CERTIFICATIONS SECTION */}
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Certifications</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">Industry credentials.</h3>
+              <h3 className="mt-4 text-2xl font-semibold text-white">Credentials.</h3>
               <div className="mt-6 grid gap-4">
                 {certifications.map((cert) => (
                   <div key={cert} className="rounded-2xl border border-white/15 bg-white/10 p-4 text-sm text-slate-100/85">
@@ -480,21 +521,22 @@ export default function Home() {
           </div>
         </section>
 
+        {/* CONTACT SECTION */}
         <section id="contact" className="snap-start py-20">
           <div className="rounded-3xl border border-white/15 bg-white/10 p-10 text-center">
             <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Contact</p>
             <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">
-              Let’s build a platform your team is proud to run.
+              Let’s discuss your infrastructure goals.
             </h2>
             <p className="mt-4 text-lg text-slate-100/85">
-              Share your infrastructure goals and I will map the fastest path to reliable, secure delivery.
+              Available for Systems Engineering and DevOps opportunities.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <a
-                href="mailto:hello@yourdomain.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="rounded-full bg-ink-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-glow transition hover:bg-ink-200"
               >
-                hello@yourdomain.com
+                {CONTACT_EMAIL}
               </a>
               <button
                 onClick={() => scrollToSection("top")}
@@ -509,11 +551,12 @@ export default function Home() {
 
       <footer className="border-t border-white/15 py-10">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 text-xs uppercase tracking-[0.3em] text-ink-100">
-          <span>© 2026 Systems Engineer Portfolio</span>
+          <span>© 2026 Nattavee Narischat</span>
           <span>Built with Next.js + Tailwind CSS</span>
         </div>
       </footer>
 
+      {/* Side Navigation */}
       <aside className="hidden lg:flex fixed top-1/2 right-6 -translate-y-1/2 flex-col gap-4">
         {navItems.map((item) => (
           <button
