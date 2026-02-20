@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Contact Information
 const CONTACT_EMAIL = "nattavee123vee@gmail.com";
@@ -14,7 +14,7 @@ const navItems = [
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "projects", label: "Projects" },
-  { id: "experience", label: "Experience" }, // Renamed from specific ID to generic to match flow
+  { id: "experience", label: "Experience" },
   { id: "contact", label: "Contact" }
 ];
 
@@ -113,7 +113,6 @@ const experience = [
   }
 ];
 
-// 
 const certifications = [
   "Kubernetes and Cloud Native Associate (KCNA)",
   "Nutanix Certified Professional - Cloud Native 6",
@@ -134,7 +133,6 @@ const toolchain = [
   "Infrastructure as Code"
 ];
 
-// 
 const education = {
   degree: "Bachelor of Engineering in Computer Engineering",
   school: "King Mongkut's University of Technology North Bangkok",
@@ -142,9 +140,49 @@ const education = {
   year: "Graduated: 04/2025"
 };
 
+// ------------------------------------
+// Custom hook: IntersectionObserver
+// Adds "visible" class when element enters viewport
+// ------------------------------------
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    // Observe the element itself and all children with reveal classes
+    const targets = [el, ...Array.from(el.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale"))];
+    targets.forEach((t) => observer.observe(t));
+
+    return () => observer.disconnect();
+  }, []);
+
+  return ref;
+}
+
 export default function Home() {
   const [activeSection, setActiveSection] = useState("top");
   const [showTop, setShowTop] = useState(false);
+
+  // Section refs for reveal animations
+  const heroRef = useReveal();
+  const aboutRef = useReveal();
+  const skillsRef = useReveal();
+  const projectsRef = useReveal();
+  const experienceRef = useReveal();
+  const contactRef = useReveal();
 
   useEffect(() => {
     const handleScroll = () => setShowTop(window.scrollY > 600);
@@ -158,25 +196,22 @@ export default function Home() {
       .map((item) => document.getElementById(item.id))
       .filter((el): el is HTMLElement => Boolean(el));
 
-    if (sections.length === 0) {
-      return;
-    }
+    if (sections.length === 0) return;
 
     let ticking = false;
     const handleScroll = () => {
-      if (ticking) {
-        return;
-      }
+      if (ticking) return;
       ticking = true;
       window.requestAnimationFrame(() => {
         const mid = window.innerHeight * 0.45;
-        const current = sections.find((section) => {
+        // Use last-match: the lowest section whose top is at/above midpoint
+        // This correctly highlights deeply nested sections like "experience"
+        let current: HTMLElement | null = null;
+        for (const section of sections) {
           const rect = section.getBoundingClientRect();
-          return rect.top <= mid && rect.bottom >= mid;
-        });
-        if (current) {
-          setActiveSection(current.id);
+          if (rect.top <= mid) current = section;
         }
+        if (current) setActiveSection(current.id);
         ticking = false;
       });
     };
@@ -192,15 +227,13 @@ export default function Home() {
 
   const scrollToSection = (id: string) => {
     const target = document.getElementById(id);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
+    if (target) target.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <div className="relative">
       <div className="pointer-events-none absolute inset-0 bg-grid-fade grid-overlay opacity-30" />
-      <div className="pointer-events-none absolute inset-0">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[6%] top-[20%] h-40 w-40 rounded-full border border-ink-400/40 bg-ink-500/10 blur-[1px]" />
         <div className="absolute right-[8%] top-[12%] h-64 w-64 rounded-full border border-sky-300/30 bg-sky-400/10 blur-[2px]" />
         <div className="scanline absolute left-0 top-0 h-[35%] w-full opacity-50" />
@@ -220,9 +253,8 @@ export default function Home() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className={`transition-colors hover:text-white ${
-                  activeSection === item.id ? "text-white" : "text-slate-400"
-                }`}
+                className={`transition-colors hover:text-white ${activeSection === item.id ? "text-white" : "text-slate-400"
+                  }`}
               >
                 {item.label}
               </a>
@@ -240,30 +272,36 @@ export default function Home() {
       </header>
 
       <main className="relative mx-auto max-w-6xl px-6">
-        
-        {/* HERO SECTION */}
-        <section id="top" className="snap-start pb-20 pt-20 sm:pt-28">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+
+        {/* ── HERO SECTION ── */}
+        <section id="top" className="pb-20 pt-20 sm:pt-28">
+          <div ref={heroRef} className="grid items-start gap-12 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
-              <div className="flex items-center gap-5">
+              {/* Avatar + title */}
+              <div className="reveal flex items-center gap-5">
                 <div className="relative h-20 w-20 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]">
                   <div className="flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] text-2xl font-semibold text-white">
                     NN
                   </div>
                 </div>
                 <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-ink-200">Systems Engineer · DevOps</p>
+                  <p className="text-xs uppercase tracking-[0.35em] text-ink-200">Systems Engineer · DevOps</p>
                   <p className="mt-1 text-sm text-slate-200/80">Bangkok, Thailand · Open for collaborations</p>
                 </div>
               </div>
 
-              <h1 className="mt-8 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
-                Hi, I'm <span className="text-ink-200">Nattavee Narischat</span>. I build resilient infrastructure for modern applications.
+              {/* Headline */}
+              <h1 className="reveal delay-100 mt-8 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
+                Hi, I&apos;m <span className="text-ink-200">Nattavee Narischat</span>. I build resilient infrastructure for modern applications.
               </h1>
-              <p className="mt-6 max-w-xl text-lg text-slate-100/85">
+
+              {/* Sub-headline */}
+              <p className="reveal delay-200 mt-6 max-w-xl text-lg text-slate-100/85">
                 Systems Engineer specializing in Nutanix, VMware, and Kubernetes. I bridge the gap between traditional infrastructure and cloud-native platforms with a focus on stability and automation.
               </p>
-              <div className="mt-8 flex flex-wrap gap-4">
+
+              {/* CTAs */}
+              <div className="reveal delay-300 mt-8 flex flex-wrap gap-4">
                 <button
                   onClick={() => scrollToSection("projects")}
                   className="rounded-full bg-ink-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-glow transition hover:bg-ink-200"
@@ -277,16 +315,23 @@ export default function Home() {
                   Contact
                 </button>
               </div>
+
+              {/* Stats */}
               <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3">
-                {stats.map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-white/15 bg-white/10 p-4">
+                {stats.map((item, i) => (
+                  <div
+                    key={item.label}
+                    className={`reveal delay-${(i + 3) * 100} rounded-2xl border border-white/15 bg-white/10 p-4`}
+                  >
                     <p className="text-xs uppercase tracking-[0.2em] text-ink-100">{item.label}</p>
                     <p className="mt-3 text-2xl font-semibold text-white">{item.value}</p>
                     <p className="mt-2 text-xs text-ink-100/80">{item.detail}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-8 flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-ink-100">
+
+              {/* Social links */}
+              <div className="reveal delay-500 mt-8 flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-ink-100">
                 <a
                   href={SOCIAL_LINKS.portfolio}
                   target="_blank"
@@ -304,12 +349,16 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="space-y-6">
+            {/* Value cards — lg:pt-28 aligns the box top with the h1 name */}
+            <div className="reveal-right space-y-6 lg:pt-28">
               <div className="rounded-3xl border border-white/15 bg-white/10 p-6">
                 <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Value I Bring</p>
-                <div className="mt-5 grid gap-4">
-                  {valueCards.map((item) => (
-                    <div key={item.title} className="rounded-2xl border border-white/10 bg-[#0f2854]/70 p-4">
+                <div className="mt-6 grid gap-4">
+                  {valueCards.map((item, i) => (
+                    <div
+                      key={item.title}
+                      className={`reveal delay-${(i + 2) * 100} rounded-2xl border border-white/10 bg-[#0f2854]/70 p-4`}
+                    >
                       <p className="text-sm font-semibold text-white">{item.title}</p>
                       <p className="mt-2 text-sm text-slate-100/85">{item.detail}</p>
                     </div>
@@ -319,6 +368,7 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Scroll indicator */}
           <div className="mt-16 flex items-center gap-4 text-xs uppercase tracking-[0.3em] text-slate-400">
             <span className="h-px flex-1 bg-white/10" />
             <button
@@ -332,10 +382,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ABOUT SECTION */}
-        <section id="about" className="snap-start py-20">
-          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-8">
+        {/* ── ABOUT SECTION ── */}
+        <section id="about" className="py-20">
+          <div ref={aboutRef} className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+            {/* Profile card — slides in from left */}
+            <div className="reveal-left rounded-3xl border border-white/15 bg-white/10 p-8">
               <div className="flex items-center gap-6">
                 <div className="float-slow relative h-28 w-28 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]">
                   <div className="flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] text-4xl font-semibold text-white">
@@ -368,23 +419,25 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div>
+
+            {/* About text — slides in from right */}
+            <div className="reveal-right">
               <p className="text-xs uppercase tracking-[0.4em] text-ink-200">About</p>
               <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">
                 Turning complex requirements into stable, observable systems.
               </h2>
-              <p className="mt-6 text-lg text-slate-100/85">
+              <p className="reveal delay-100 mt-6 text-lg text-slate-100/85">
                 My work centers on two pillars: Reliability and Modernization. I maintain traditional virtualization platforms that businesses rely on, while building the GitOps and Kubernetes foundations for the future.
               </p>
-              <p className="mt-4 text-lg text-slate-100/85">
+              <p className="reveal delay-200 mt-4 text-lg text-slate-100/85">
                 From configuring FortiGate firewalls to deploying Argo CD pipelines, I ensure infrastructure is not just operational, but secure and efficient.
               </p>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
+                <div className="reveal delay-300 rounded-3xl border border-white/15 bg-white/10 p-5">
                   <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Now</p>
                   <p className="mt-3 text-sm text-slate-100/85">Systems Engineer at Zenith Comp Co., Ltd.</p>
                 </div>
-                <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
+                <div className="reveal delay-400 rounded-3xl border border-white/15 bg-white/10 p-5">
                   <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Previously</p>
                   <p className="mt-3 text-sm text-slate-100/85">Network Engineer Intern & IT Support roles.</p>
                 </div>
@@ -393,106 +446,128 @@ export default function Home() {
           </div>
         </section>
 
-        {/* SKILLS SECTION */}
-        <section id="skills" className="snap-start py-20">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Skills</p>
-              <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">
-                Technical Expertise & Toolchain
-              </h2>
-            </div>
-            <p className="max-w-xl text-sm text-slate-300">
-               A comprehensive toolkit covering Cloud-Native Platforms, Virtualization, CI/CD, and Observability solutions.
-            </p>
-          </div>
-          <div className="mt-10 flex flex-wrap gap-3">
-            {skills.map((skill) => (
-              <span
-                key={skill}
-                className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-slate-100/85"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {toolchain.map((tool) => (
-              <div key={tool} className="rounded-2xl border border-white/15 bg-white/10 p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Focus Area</p>
-                <p className="mt-2 text-sm text-white">{tool}</p>
+        {/* ── SKILLS SECTION ── */}
+        <section id="skills" className="py-20">
+          <div ref={skillsRef}>
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div className="reveal">
+                <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Skills</p>
+                <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">
+                  Technical Expertise & Toolchain
+                </h2>
               </div>
-            ))}
+              <p className="reveal delay-100 max-w-xl text-sm text-slate-300">
+                A comprehensive toolkit covering Cloud-Native Platforms, Virtualization, CI/CD, and Observability solutions.
+              </p>
+            </div>
+
+            {/* Skill pills with staggered reveal */}
+            <div className="mt-10 flex flex-wrap gap-3">
+              {skills.map((skill, i) => (
+                <span
+                  key={skill}
+                  className="reveal rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-slate-100/85"
+                  style={{ transitionDelay: `${Math.min(i * 40, 600)}ms` }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+
+            {/* Toolchain cards */}
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {toolchain.map((tool, i) => (
+                <div
+                  key={tool}
+                  className="reveal rounded-2xl border border-white/15 bg-white/10 p-4"
+                  style={{ transitionDelay: `${200 + i * 60}ms` }}
+                >
+                  <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Focus Area</p>
+                  <p className="mt-2 text-sm text-white">{tool}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* PROJECTS SECTION */}
-        <section id="projects" className="snap-start py-20">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Projects</p>
-              <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">Featured Implementations</h2>
-            </div>
-            <p className="max-w-xl text-sm text-slate-300">
-              Real-world application of infrastructure code, networking, and security principles.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-            {/* Featured Project - Freelance Work */}
-            <div className="rounded-3xl border border-white/15 bg-gradient-to-br from-ink-400/30 via-[#0f2854]/80 to-[#0f2854] p-8">
-              <p className="text-xs uppercase tracking-[0.3em] text-ink-200">Featured Project</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">E-learning Platform Infrastructure</h3>
-              <p className="mt-4 text-sm text-slate-100/85">
-                Designed and implemented a complete private cloud solution using K3s. Deployed Harbor for container registry management and established GitOps workflows via Argo CD to streamline application delivery.
+        {/* ── PROJECTS SECTION ── */}
+        <section id="projects" className="py-20">
+          <div ref={projectsRef}>
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div className="reveal">
+                <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Projects</p>
+                <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">Featured Implementations</h2>
+              </div>
+              <p className="reveal delay-100 max-w-xl text-sm text-slate-300">
+                Real-world application of infrastructure code, networking, and security principles.
               </p>
-              <div className="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-slate-300">
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">K3s Kubernetes</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Argo CD</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Harbor</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">GitHub Actions</span>
-              </div>
             </div>
-            
-            {/* Featured Project - Homelab */}
-            <div className="grid gap-6">
-              <div className="rounded-3xl border border-white/15 bg-white/10 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Homelab Thailand</p>
-                <div className="mt-4 space-y-3 text-sm text-slate-100/85">
-                  <p>Co-Founder of a technical community.</p>
-                  <p>Focused on self-hosting, networking, and infrastructure.</p>
-                  <p>Personal Proxmox & FortiGate environment.</p>
+
+            <div className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+              {/* Featured Project */}
+              <div className="reveal-left rounded-3xl border border-white/15 bg-gradient-to-br from-ink-400/30 via-[#0f2854]/80 to-[#0f2854] p-8">
+                <p className="text-xs uppercase tracking-[0.3em] text-ink-200">Featured Project</p>
+                <h3 className="mt-4 text-2xl font-semibold text-white">E-learning Platform Infrastructure</h3>
+                <p className="mt-4 text-sm text-slate-100/85">
+                  Designed and implemented a complete private cloud solution using K3s. Deployed Harbor for container registry management and established GitOps workflows via Argo CD to streamline application delivery.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-slate-300">
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">K3s Kubernetes</span>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Argo CD</span>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Harbor</span>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">GitHub Actions</span>
                 </div>
               </div>
-              <div className="rounded-3xl border border-white/15 bg-white/10 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Capstone</p>
-                <div className="mt-4 space-y-3 text-sm text-slate-100/85">
-                  <p>Centralized network monitoring system.</p>
-                  <p>Tech: Zabbix, Prometheus, Grafana, OpenSearch.</p>
+
+              {/* Side projects */}
+              <div className="grid gap-6">
+                <div className="reveal-right rounded-3xl border border-white/15 bg-white/10 p-6">
+                  <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Homelab Thailand</p>
+                  <div className="mt-4 space-y-3 text-sm text-slate-100/85">
+                    <p>Co-Founder of a technical community.</p>
+                    <p>Focused on self-hosting, networking, and infrastructure.</p>
+                    <p>Personal Proxmox & FortiGate environment.</p>
+                  </div>
+                </div>
+                <div className="reveal-right delay-150 rounded-3xl border border-white/15 bg-white/10 p-6">
+                  <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Capstone</p>
+                  <div className="mt-4 space-y-3 text-sm text-slate-100/85">
+                    <p>Centralized network monitoring system.</p>
+                    <p>Tech: Zabbix, Prometheus, Grafana, OpenSearch.</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {projects.map((project) => (
-              <div
-                key={project.title}
-                className="rounded-3xl border border-white/15 bg-white/10 p-6 transition hover:border-white/30 hover:bg-white/15"
-              >
-                <h3 className="text-lg font-semibold text-white">{project.title}</h3>
-                <p className="mt-3 text-sm text-slate-100/85">{project.description}</p>
-              </div>
-            ))}
+            {/* Project grid */}
+            <div className="mt-10 grid gap-6 md:grid-cols-2">
+              {projects.map((project, i) => (
+                <div
+                  key={project.title}
+                  className="reveal rounded-3xl border border-white/15 bg-white/10 p-6 transition hover:border-white/30 hover:bg-white/15"
+                  style={{ transitionDelay: `${i * 100}ms` }}
+                >
+                  <h3 className="text-lg font-semibold text-white">{project.title}</h3>
+                  <p className="mt-3 text-sm text-slate-100/85">{project.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
+        </section>
 
-          {/* EXPERIENCE SECTION */}
-          <div id="experience" className="mt-14 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        {/* ── EXPERIENCE SECTION ── */}
+        <section id="experience" className="py-20">
+          <div ref={experienceRef} className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Experience</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">Professional Timeline.</h3>
+              <p className="reveal text-xs uppercase tracking-[0.4em] text-ink-200">Experience</p>
+              <h3 className="reveal delay-100 mt-4 text-2xl font-semibold text-white">Professional Timeline.</h3>
               <div className="mt-6 space-y-4">
-                {experience.map((item) => (
-                  <div key={item.role} className="rounded-3xl border border-white/15 bg-white/10 p-5">
+                {experience.map((item, i) => (
+                  <div
+                    key={item.role}
+                    className="reveal rounded-3xl border border-white/15 bg-white/10 p-5"
+                    style={{ transitionDelay: `${150 + i * 100}ms` }}
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-4">
                       <div>
                         <h4 className="text-base font-semibold text-white">{item.role}</h4>
@@ -505,14 +580,18 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            
-            {/* CERTIFICATIONS SECTION */}
+
+            {/* Certifications */}
             <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Certifications</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">Credentials.</h3>
+              <p className="reveal text-xs uppercase tracking-[0.4em] text-ink-200">Certifications</p>
+              <h3 className="reveal delay-100 mt-4 text-2xl font-semibold text-white">Credentials.</h3>
               <div className="mt-6 grid gap-4">
-                {certifications.map((cert) => (
-                  <div key={cert} className="rounded-2xl border border-white/15 bg-white/10 p-4 text-sm text-slate-100/85">
+                {certifications.map((cert, i) => (
+                  <div
+                    key={cert}
+                    className="reveal rounded-2xl border border-white/15 bg-white/10 p-4 text-sm text-slate-100/85"
+                    style={{ transitionDelay: `${150 + i * 80}ms` }}
+                  >
                     {cert}
                   </div>
                 ))}
@@ -521,29 +600,31 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CONTACT SECTION */}
-        <section id="contact" className="snap-start py-20">
-          <div className="rounded-3xl border border-white/15 bg-white/10 p-10 text-center">
-            <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Contact</p>
-            <h2 className="mt-6 text-3xl font-semibold text-white sm:text-4xl">
-              Let’s discuss your infrastructure goals.
-            </h2>
-            <p className="mt-4 text-lg text-slate-100/85">
-              Available for Systems Engineering and DevOps opportunities.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="rounded-full bg-ink-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-glow transition hover:bg-ink-200"
-              >
-                {CONTACT_EMAIL}
-              </a>
-              <button
-                onClick={() => scrollToSection("top")}
-                className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/15"
-              >
-                Back To Top
-              </button>
+        {/* ── CONTACT SECTION ── */}
+        <section id="contact" className="py-20">
+          <div ref={contactRef}>
+            <div className="reveal-scale rounded-3xl border border-white/15 bg-white/10 p-10 text-center">
+              <p className="text-xs uppercase tracking-[0.4em] text-ink-200">Contact</p>
+              <h2 className="reveal delay-100 mt-6 text-3xl font-semibold text-white sm:text-4xl">
+                Let&apos;s discuss your infrastructure goals.
+              </h2>
+              <p className="reveal delay-200 mt-4 text-lg text-slate-100/85">
+                Available for Systems Engineering and DevOps opportunities.
+              </p>
+              <div className="reveal delay-300 mt-8 flex flex-wrap items-center justify-center gap-4">
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="rounded-full bg-ink-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-glow transition hover:bg-ink-200"
+                >
+                  {CONTACT_EMAIL}
+                </a>
+                <button
+                  onClick={() => scrollToSection("top")}
+                  className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/15"
+                >
+                  Back To Top
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -566,16 +647,14 @@ export default function Home() {
             aria-label={`Go to ${item.label}`}
           >
             <span
-              className={`h-3 w-3 rounded-full border transition ${
-                activeSection === item.id
-                  ? "border-ink-300 bg-ink-400"
-                  : "border-white/30 bg-transparent"
-              }`}
+              className={`h-3 w-3 rounded-full border transition ${activeSection === item.id
+                ? "border-ink-300 bg-ink-400"
+                : "border-white/30 bg-transparent"
+                }`}
             />
             <span
-              className={`text-[10px] uppercase tracking-[0.3em] transition ${
-                activeSection === item.id ? "text-ink-200" : "text-slate-500"
-              }`}
+              className={`text-[10px] uppercase tracking-[0.3em] transition ${activeSection === item.id ? "text-ink-200" : "text-slate-500"
+                }`}
             >
               {item.label}
             </span>
@@ -585,13 +664,12 @@ export default function Home() {
 
       <button
         onClick={() => scrollToSection("top")}
-        className={`fixed bottom-6 right-6 z-50 rounded-full border border-white/30 bg-[#0f2854]/85 px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-soft transition hover:border-white/60 hover:bg-[#1c4d8d]/80 lg:bottom-10 lg:right-10 ${
-          showTop ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
+        className={`fixed bottom-6 right-6 z-50 rounded-full border border-white/30 bg-[#0f2854]/85 px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-soft transition hover:border-white/60 hover:bg-[#1c4d8d]/80 lg:bottom-10 lg:right-10 ${showTop ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
         aria-label="Scroll to top"
       >
         Top
       </button>
-    </div>
+    </div >
   );
 }

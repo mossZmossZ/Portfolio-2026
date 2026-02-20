@@ -1,6 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  /* Custom Font Families - Tailwind v4 syntax */
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Custom Ink Color Palette */
+  --color-ink-50: #e8f6fb;
+  --color-ink-100: #d7eef8;
+  --color-ink-200: #bde8f5;
+  --color-ink-300: #9fd6ee;
+  --color-ink-400: #4988c4;
+  --color-ink-500: #1c4d8d;
+  --color-ink-600: #163c71;
+  --color-ink-700: #12335f;
+  --color-ink-800: #0f2854;
+  --color-ink-900: #0c2147;
+  --color-ink-950: #081733;
+
+  /* Custom Box Shadows */
+  --shadow-glow: 0 20px 80px -40px rgba(59, 130, 246, 0.8);
+  --shadow-soft: 0 20px 60px -40px rgba(15, 23, 42, 0.7);
+
+  /* Custom Background Image */
+  --background-image-grid-fade: linear-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+}
 
 :root {
   color-scheme: dark;
@@ -8,16 +32,13 @@
 
 html {
   scroll-behavior: smooth;
-}
-
-@media (min-width: 1024px) {
-  html {
-    scroll-snap-type: y proximity;
-  }
+  overflow-anchor: none;
 }
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
+  overflow-anchor: none;
   background:
     radial-gradient(1200px 700px at 12% -8%, rgba(73, 136, 196, 0.55), transparent 55%),
     radial-gradient(900px 600px at 92% 4%, rgba(189, 232, 245, 0.45), transparent 60%),
@@ -60,20 +81,136 @@ body {
 }
 
 .scanline {
-  background: linear-gradient(
-    180deg,
-    rgba(59, 130, 246, 0) 0%,
-    rgba(59, 130, 246, 0.12) 50%,
-    rgba(59, 130, 246, 0) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(59, 130, 246, 0) 0%,
+      rgba(59, 130, 246, 0.12) 50%,
+      rgba(59, 130, 246, 0) 100%);
   animation: scanline 6s linear infinite;
 }
 
+/* =============================================
+   SCROLL-TRIGGERED REVEAL ANIMATIONS
+   Apple-style: elements start hidden, animate
+   in when they enter the viewport.
+   ============================================= */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  will-change: transform, opacity;
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  will-change: transform, opacity;
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  will-change: transform, opacity;
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.94);
+  will-change: transform, opacity;
+  transition:
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delay helpers */
+.delay-100 {
+  transition-delay: 0.1s;
+}
+
+.delay-150 {
+  transition-delay: 0.15s;
+}
+
+.delay-200 {
+  transition-delay: 0.2s;
+}
+
+.delay-250 {
+  transition-delay: 0.25s;
+}
+
+.delay-300 {
+  transition-delay: 0.3s;
+}
+
+.delay-350 {
+  transition-delay: 0.35s;
+}
+
+.delay-400 {
+  transition-delay: 0.4s;
+}
+
+.delay-500 {
+  transition-delay: 0.5s;
+}
+
+.delay-600 {
+  transition-delay: 0.6s;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* =============================================
+   KEYFRAMES
+   ============================================= */
+
 @keyframes blink {
+
   0%,
   49% {
     opacity: 1;
   }
+
   50%,
   100% {
     opacity: 0;
@@ -84,19 +221,23 @@ body {
   0% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.45);
   }
+
   70% {
     box-shadow: 0 0 0 16px rgba(59, 130, 246, 0);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
   }
 }
 
 @keyframes float-slow {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -106,6 +247,7 @@ body {
   0% {
     transform: translateY(-120%);
   }
+
   100% {
     transform: translateY(220%);
   }
