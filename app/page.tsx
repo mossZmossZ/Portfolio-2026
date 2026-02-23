@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 
 // Contact Information
-const CONTACT_EMAIL = "nattavee123vee@gmail.com";
+const CONTACT_EMAIL = "nattavee.n@nattavee.com";
 const SOCIAL_LINKS = {
   linkedin: "https://linkedin.com/in/mossnattavee",
+  github: "https://github.com/mossZmossZ",
   portfolio: "https://portfolio.nattavee.com",
+  email: "mailto:nattavee.n@nattavee.com",
 };
 
 const navItems = [
@@ -172,6 +174,39 @@ function useReveal() {
   return ref;
 }
 
+function ProfileAvatar({ size }: { size: "small" | "large" }) {
+  const [hasError, setHasError] = useState(false);
+  const url = "/api/profile-image";
+
+  const containerClass =
+    size === "small"
+      ? "relative h-20 w-20 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]"
+      : "float-slow relative h-28 w-28 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]";
+
+  const textSizeClass = size === "small" ? "text-2xl" : "text-4xl";
+
+  if (!url || hasError) {
+    return (
+      <div className={containerClass}>
+        <div className={`flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] font-semibold text-white ${textSizeClass}`}>
+          NN
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={containerClass}>
+      <img
+        src={url}
+        alt="Nattavee Narischat"
+        className="h-full w-full rounded-3xl object-cover"
+        onError={() => setHasError(true)}
+      />
+    </div>
+  );
+}
+
 export default function Home() {
   const [activeSection, setActiveSection] = useState("top");
   const [showTop, setShowTop] = useState(false);
@@ -279,11 +314,7 @@ export default function Home() {
             <div>
               {/* Avatar + title */}
               <div className="reveal flex items-center gap-5">
-                <div className="relative h-20 w-20 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]">
-                  <div className="flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] text-2xl font-semibold text-white">
-                    NN
-                  </div>
-                </div>
+                <ProfileAvatar size="small" />
                 <div>
                   <p className="text-xs uppercase tracking-[0.35em] text-ink-200">Systems Engineer · DevOps</p>
                   <p className="mt-1 text-sm text-slate-200/80">Bangkok, Thailand · Open for collaborations</p>
@@ -333,11 +364,11 @@ export default function Home() {
               {/* Social links */}
               <div className="reveal delay-500 mt-8 flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-ink-100">
                 <a
-                  href={SOCIAL_LINKS.portfolio}
+                  href={SOCIAL_LINKS.email}
                   target="_blank"
                   className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 transition hover:border-white/50 hover:bg-white/20"
                 >
-                  Portfolio
+                  Email
                 </a>
                 <a
                   href={SOCIAL_LINKS.linkedin}
@@ -345,6 +376,13 @@ export default function Home() {
                   className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 transition hover:border-white/50 hover:bg-white/20"
                 >
                   LinkedIn
+                </a>
+                <a
+                  href={SOCIAL_LINKS.github}
+                  target="_blank"
+                  className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 transition hover:border-white/50 hover:bg-white/20"
+                >
+                  GitHub
                 </a>
               </div>
             </div>
@@ -388,11 +426,7 @@ export default function Home() {
             {/* Profile card — slides in from left */}
             <div className="reveal-left rounded-3xl border border-white/15 bg-white/10 p-8">
               <div className="flex items-center gap-6">
-                <div className="float-slow relative h-28 w-28 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]">
-                  <div className="flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] text-4xl font-semibold text-white">
-                    NN
-                  </div>
-                </div>
+                <ProfileAvatar size="large" />
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-ink-100">Systems Engineer</p>
                   <h3 className="mt-2 text-2xl font-semibold text-white">Nattavee Narischat</h3>
@@ -491,7 +525,7 @@ export default function Home() {
         </section>
 
         {/* ── PROJECTS SECTION ── */}
-        <section id="projects" className="py-20">
+        <section id="projects" className="py-5">
           <div ref={projectsRef}>
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div className="reveal">
@@ -538,25 +572,11 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            {/* Project grid */}
-            <div className="mt-10 grid gap-6 md:grid-cols-2">
-              {projects.map((project, i) => (
-                <div
-                  key={project.title}
-                  className="reveal rounded-3xl border border-white/15 bg-white/10 p-6 transition hover:border-white/30 hover:bg-white/15"
-                  style={{ transitionDelay: `${i * 100}ms` }}
-                >
-                  <h3 className="text-lg font-semibold text-white">{project.title}</h3>
-                  <p className="mt-3 text-sm text-slate-100/85">{project.description}</p>
-                </div>
-              ))}
-            </div>
           </div>
         </section>
 
         {/* ── EXPERIENCE SECTION ── */}
-        <section id="experience" className="py-20">
+        <section id="experience" className="py-5">
           <div ref={experienceRef} className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
               <p className="reveal text-xs uppercase tracking-[0.4em] text-ink-200">Experience</p>
@@ -609,7 +629,7 @@ export default function Home() {
                 Let&apos;s discuss your infrastructure goals.
               </h2>
               <p className="reveal delay-200 mt-4 text-lg text-slate-100/85">
-                Available for Systems Engineering and DevOps opportunities.
+                Available for Platform Engineering and DevOps opportunities.
               </p>
               <div className="reveal delay-300 mt-8 flex flex-wrap items-center justify-center gap-4">
                 <a
@@ -617,6 +637,22 @@ export default function Home() {
                   className="rounded-full bg-ink-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-glow transition hover:bg-ink-200"
                 >
                   {CONTACT_EMAIL}
+                </a>
+                <a
+                  href={SOCIAL_LINKS.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/15"
+                >
+                  LinkedIn
+                </a>
+                <a
+                  href={SOCIAL_LINKS.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/15"
+                >
+                  GitHub
                 </a>
                 <button
                   onClick={() => scrollToSection("top")}

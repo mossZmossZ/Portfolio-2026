@@ -16,9 +16,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DevOps & Systems Engineering | Portfolio",
+  title: "Nattavee Narischat | Portfolio",
   description:
-    "Production-grade DevOps and systems engineering portfolio with cloud infrastructure, automation, and reliability focus."
+    "Nattavee Narischat's Portfolio"
 };
 
 export default function RootLayout({
