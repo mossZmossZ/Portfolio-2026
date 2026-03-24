@@ -669,7 +669,6 @@ export default function Home() {
       <footer className="border-t border-white/15 py-10">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 text-xs uppercase tracking-[0.3em] text-ink-100">
           <span>© 2026 Nattavee Narischat</span>
-          <span>Built with Next.js + Tailwind CSS</span>
         </div>
       </footer>
 
