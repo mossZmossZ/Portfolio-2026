@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nattavee Narischat - Systems Engineer</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ink: {
+              50: '#e8f6fb',
+              100: '#d7eef8',
+              200: '#bde8f5',
+              300: '#9fd6ee',
+              400: '#4988c4',
+              500: '#1c4d8d',
+              600: '#163c71',
+              700: '#12335f',
+              800: '#0f2854',
+              900: '#0c2147',
+              950: '#081733',
+            }
+          },
+          boxShadow: {
+            glow: '0 20px 80px -40px rgba(59, 130, 246, 0.8)',
+            soft: '0 20px 60px -40px rgba(15, 23, 42, 0.7)',
+          },
+          backgroundImage: {
+            'grid-fade': 'linear-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px)',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    html {
+      scroll-behavior: smooth;
+      overflow-anchor: none;
+    }
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-anchor: none;
+      background:
+        radial-gradient(1200px 700px at 12% -8%, rgba(73, 136, 196, 0.55), transparent 55%),
+        radial-gradient(900px 600px at 92% 4%, rgba(189, 232, 245, 0.45), transparent 60%),
+        linear-gradient(180deg, #0f2854 0%, #1c4d8d 50%, #0f2854 100%);
+      color: #f6fbfe;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    * { scroll-margin-top: 96px; }
+    ::selection {
+      background: rgba(59, 130, 246, 0.45);
+      color: #f8fafc;
+    }
+    .grid-overlay { background-size: 48px 48px; }
+    .scanline {
+      background: linear-gradient(180deg,
+          rgba(59, 130, 246, 0) 0%,
+          rgba(59, 130, 246, 0.12) 50%,
+          rgba(59, 130, 246, 0) 100%);
+      animation: scanline 6s linear infinite;
+    }
+    .float-slow { animation: float-slow 10s ease-in-out infinite; }
+
+    /* Reveal Animations */
+    .reveal, .reveal-left, .reveal-right, .reveal-scale {
+      opacity: 0;
+      will-change: transform, opacity;
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal { transform: translateY(32px); }
+    .reveal-left { transform: translateX(-40px); }
+    .reveal-right { transform: translateX(40px); }
+    .reveal-scale { transform: scale(0.94); transition-duration: 0.65s; }
+
+    .reveal.visible, .reveal-left.visible, .reveal-right.visible {
+      opacity: 1; transform: translate(0);
+    }
+    .reveal-scale.visible {
+      opacity: 1; transform: scale(1);
+    }
+
+    .delay-100 { transition-delay: 0.1s; }
+    .delay-150 { transition-delay: 0.15s; }
+    .delay-200 { transition-delay: 0.2s; }
+    .delay-300 { transition-delay: 0.3s; }
+    .delay-400 { transition-delay: 0.4s; }
+    .delay-500 { transition-delay: 0.5s; }
+
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes scanline {
+      0% { transform: translateY(-120%); }
+      100% { transform: translateY(220%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        opacity: 1; transform: none; transition: none;
+      }
+    }
+  </style>
+</head>
+<body class="relative">
+
+  <!-- Background Effects -->
+  <div class="pointer-events-none absolute inset-0 bg-grid-fade grid-overlay opacity-30"></div>
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute left-[6%] top-[20%] h-40 w-40 rounded-full border border-ink-400/40 bg-ink-500/10 blur-[1px]"></div>
+    <div class="absolute right-[8%] top-[12%] h-64 w-64 rounded-full border border-sky-300/30 bg-sky-400/10 blur-[2px]"></div>
+    <div class="scanline absolute left-0 top-0 h-[35%] w-full opacity-50"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 border-b border-white/15 bg-[#0f2854]/85 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <a href="#top" class="flex items-center gap-3 text-sm font-semibold tracking-[0.2em] text-slate-200">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg text-ink-200">NN</span>
+        <span class="hidden sm:inline">SYSTEMS ENGINEER</span>
+      </a>
+      <nav class="hidden items-center gap-6 text-xs uppercase tracking-[0.25em] text-slate-400 md:flex nav-links">
+        <a href="#top" data-target="top" class="transition-colors hover:text-white text-white">Overview</a>
+        <a href="#about" data-target="about" class="transition-colors hover:text-white text-slate-400">About</a>
+        <a href="#skills" data-target="skills" class="transition-colors hover:text-white text-slate-400">Skills</a>
+        <a href="#projects" data-target="projects" class="transition-colors hover:text-white text-slate-400">Projects</a>
+        <a href="#experience" data-target="experience" class="transition-colors hover:text-white text-slate-400">Experience</a>
+        <a href="#contact" data-target="contact" class="transition-colors hover:text-white text-slate-400">Contact</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="#contact" class="rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/20">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative mx-auto max-w-6xl px-6">
+
+    <!-- HERO SECTION -->
+    <section id="top" class="pb-20 pt-20 sm:pt-28 section-spy">
+      <div class="grid items-start gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+        <div>
+          <!-- Avatar + title -->
+          <div class="reveal flex items-center gap-5">
+            <div class="relative h-20 w-20 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]">
+              <div class="flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] font-semibold text-white text-2xl">NN</div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.35em] text-ink-200">Systems Engineer · DevOps</p>
+              <p class="mt-1 text-sm text-slate-200/80">Bangkok, Thailand · Open for collaborations</p>
+            </div>
+          </div>
+
+          <!-- Headline -->
+          <h1 class="reveal delay-100 mt-8 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
+            Hi, I'm <span class="text-ink-200">Nattavee Narischat</span>. I build resilient infrastructure for modern applications.
+          </h1>
+
+          <!-- Sub-headline -->
+          <p class="reveal delay-200 mt-6 max-w-xl text-lg text-slate-100/85">
+            Systems Engineer specializing in Nutanix, VMware, and Kubernetes. I bridge the gap between traditional infrastructure and cloud-native platforms with a focus on stability and automation.
+          </p>
+
+          <!-- CTAs -->
+          <div class="reveal delay-300 mt-8 flex flex-wrap gap-4">
+            <a href="#projects" class="inline-block rounded-full bg-ink-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-glow transition hover:bg-ink-200">View Projects</a>
+            <a href="#contact" class="inline-block rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/15">Contact</a>
+          </div>
+
+          <!-- Stats -->
+          <div class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3">
+            <div class="reveal delay-300 rounded-2xl border border-white/15 bg-white/10 p-4">
+              <p class="text-xs uppercase tracking-[0.2em] text-ink-100">Experience</p>
+              <p class="mt-3 text-2xl font-semibold text-white">1+ Years</p>
+              <p class="mt-2 text-xs text-ink-100/80">System Engineer & DevOps</p>
+            </div>
+            <div class="reveal delay-400 rounded-2xl border border-white/15 bg-white/10 p-4">
+              <p class="text-xs uppercase tracking-[0.2em] text-ink-100">Certifications</p>
+              <p class="mt-3 text-2xl font-semibold text-white">5+</p>
+              <p class="mt-2 text-xs text-ink-100/80">Nutanix, Kubernetes, Security</p>
+            </div>
+            <div class="reveal delay-500 rounded-2xl border border-white/15 bg-white/10 p-4">
+              <p class="text-xs uppercase tracking-[0.2em] text-ink-100">Focus</p>
+              <p class="mt-3 text-2xl font-semibold text-white">Infra</p>
+              <p class="mt-2 text-xs text-ink-100/80">Virtualization & Cloud Native</p>
+            </div>
+          </div>
+
+          <!-- Social links -->
+          <div class="reveal delay-500 mt-8 flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-ink-100">
+            <a href="mailto:nattavee.n@nattavee.com" target="_blank" class="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 transition hover:border-white/50 hover:bg-white/20">Email</a>
+            <a href="https://www.linkedin.com/in/mossnattavee/" target="_blank" class="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 transition hover:border-white/50 hover:bg-white/20">LinkedIn</a>
+            <a href="https://github.com/mossZmossZ" target="_blank" class="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 transition hover:border-white/50 hover:bg-white/20">GitHub</a>
+          </div>
+        </div>
+
+        <!-- Value cards -->
+        <div class="reveal-right space-y-6 lg:pt-28">
+          <div class="rounded-3xl border border-white/15 bg-white/10 p-6">
+            <p class="text-xs uppercase tracking-[0.3em] text-ink-100">Value I Bring</p>
+            <div class="mt-6 grid gap-4">
+              <div class="reveal delay-200 rounded-2xl border border-white/10 bg-[#0f2854]/70 p-4">
+                <p class="text-sm font-semibold text-white">Infrastructure Stability</p>
+                <p class="mt-2 text-sm text-slate-100/85">Manage high-availability Nutanix and VMware clusters for mission-critical workloads.</p>
+              </div>
+              <div class="reveal delay-300 rounded-2xl border border-white/10 bg-[#0f2854]/70 p-4">
+                <p class="text-sm font-semibold text-white">Cloud-Native Delivery</p>
+                <p class="mt-2 text-sm text-slate-100/85">Implement Kubernetes platforms and GitOps workflows for scalable application deployment.</p>
+              </div>
+              <div class="reveal delay-400 rounded-2xl border border-white/10 bg-[#0f2854]/70 p-4">
+                <p class="text-sm font-semibold text-white">Observability</p>
+                <p class="mt-2 text-sm text-slate-100/85">Develop monitoring pipelines (Prometheus/Grafana) to reduce MTTR and ensure system health.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="mt-16 flex items-center gap-4 text-xs uppercase tracking-[0.3em] text-slate-400">
+        <span class="h-px flex-1 bg-white/10"></span>
+        <a href="#about" class="flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-white/90 transition hover:border-white/60 hover:text-white">
+          Scroll Down <span class="text-base">↓</span>
+        </a>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="py-20 section-spy">
+      <div class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+        <div class="reveal-left rounded-3xl border border-white/15 bg-white/10 p-8">
+          <div class="flex items-center gap-6">
+            <div class="float-slow relative h-28 w-28 rounded-3xl bg-gradient-to-br from-ink-200 via-ink-300 to-ink-400 p-[2px]">
+              <div class="flex h-full w-full items-center justify-center rounded-3xl bg-[#0f2854] font-semibold text-white text-4xl">NN</div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.3em] text-ink-100">Systems Engineer</p>
+              <h3 class="mt-2 text-2xl font-semibold text-white">Nattavee Narischat</h3>
+              <p class="mt-1 text-sm text-slate-100/85">Cloud-Native · Infrastructure · Security</p>
+            </div>
+          </div>
+          <div class="mt-6 space-y-4 text-sm text-slate-100/85">
+            <p>I help organizations maintain robust IT infrastructure while navigating the transition to containerized environments.</p>
+            <p>My expertise lies in managing lifecycle management for Nutanix and VMware clusters, while simultaneously architecting Kubernetes solutions for cloud-native workloads.</p>
+          </div>
+          <div class="mt-6 grid gap-4 text-xs uppercase tracking-[0.2em] text-ink-100 sm:grid-cols-2">
+            <div class="rounded-2xl border border-white/15 bg-white/10 p-4">
+              <p class="text-white">Education</p>
+              <p class="mt-2 capitalize">King Mongkut's University of Technology North Bangkok</p>
+              <p class="mt-1 text-slate-400">Bachelor of Engineering in Computer Engineering</p>
+            </div>
+            <div class="rounded-2xl border border-white/15 bg-white/10 p-4">
+              <p class="text-white">Focus</p>
+              <p class="mt-2">Platform Engineering</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-right">
+          <p class="text-xs uppercase tracking-[0.4em] text-ink-200">About</p>
+          <h2 class="mt-6 text-3xl font-semibold text-white sm:text-4xl">Turning complex requirements into stable, observable systems.</h2>
+          <p class="reveal delay-100 mt-6 text-lg text-slate-100/85">My work centers on two pillars: Reliability and Modernization. I maintain traditional virtualization platforms that businesses rely on, while building the GitOps and Kubernetes foundations for the future.</p>
+          <p class="reveal delay-200 mt-4 text-lg text-slate-100/85">From configuring FortiGate firewalls to deploying Argo CD pipelines, I ensure infrastructure is not just operational, but secure and efficient.</p>
+          <div class="mt-8 grid gap-4 sm:grid-cols-2">
+            <div class="reveal delay-300 rounded-3xl border border-white/15 bg-white/10 p-5">
+              <p class="text-xs uppercase tracking-[0.3em] text-ink-100">Now</p>
+              <p class="mt-3 text-sm text-slate-100/85">Systems Engineer at Zenith Comp Co., Ltd.</p>
+            </div>
+            <div class="reveal delay-400 rounded-3xl border border-white/15 bg-white/10 p-5">
+              <p class="text-xs uppercase tracking-[0.3em] text-ink-100">Previously</p>
+              <p class="mt-3 text-sm text-slate-100/85">Network Engineer Intern &amp; IT Support roles.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS SECTION -->
+    <section id="skills" class="py-20 section-spy">
+      <div>
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <div class="reveal">
+            <p class="text-xs uppercase tracking-[0.4em] text-ink-200">Skills</p>
+            <h2 class="mt-6 text-3xl font-semibold text-white sm:text-4xl">Technical Expertise & Toolchain</h2>
+          </div>
+          <p class="reveal delay-100 max-w-xl text-sm text-slate-300">A comprehensive toolkit covering Cloud-Native Platforms, Virtualization, CI/CD, and Observability solutions.</p>
+        </div>
+
+        <div class="mt-10 flex flex-wrap gap-3">
+          <!-- Skill pills injected by JS -->
+        </div>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <!-- Toolchain cards injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section id="projects" class="py-5 section-spy">
+      <div>
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <div class="reveal">
+            <p class="text-xs uppercase tracking-[0.4em] text-ink-200">Projects</p>
+            <h2 class="mt-6 text-3xl font-semibold text-white sm:text-4xl">Featured Implementations</h2>
+          </div>
+          <p class="reveal delay-100 max-w-xl text-sm text-slate-300">Real-world application of infrastructure code, networking, and security principles.</p>
+        </div>
+
+        <div class="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div class="reveal-left rounded-3xl border border-white/15 bg-gradient-to-br from-ink-400/30 via-[#0f2854]/80 to-[#0f2854] p-8">
+            <p class="text-xs uppercase tracking-[0.3em] text-ink-200">Featured Project</p>
+            <h3 class="mt-4 text-2xl font-semibold text-white">E-learning Platform Infrastructure</h3>
+            <p class="mt-4 text-sm text-slate-100/85">Designed and implemented a complete private cloud solution using K3s. Deployed Harbor for container registry management and established GitOps workflows via Argo CD to streamline application delivery.</p>
+            <div class="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-slate-300">
+              <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1">K3s Kubernetes</span>
+              <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1">Argo CD</span>
+              <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1">Harbor</span>
+              <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1">GitHub Actions</span>
+            </div>
+          </div>
+
+          <div class="grid gap-6">
+            <div class="reveal-right rounded-3xl border border-white/15 bg-white/10 p-6">
+              <p class="text-xs uppercase tracking-[0.3em] text-ink-100">Homelab Thailand</p>
+              <div class="mt-4 space-y-3 text-sm text-slate-100/85">
+                <p>Co-Founder of a technical community.</p>
+                <p>Focused on self-hosting, networking, and infrastructure.</p>
+                <p>Personal Proxmox & FortiGate environment.</p>
+              </div>
+            </div>
+            <div class="reveal-right delay-150 rounded-3xl border border-white/15 bg-white/10 p-6">
+              <p class="text-xs uppercase tracking-[0.3em] text-ink-100">Capstone</p>
+              <div class="mt-4 space-y-3 text-sm text-slate-100/85">
+                <p>Centralized network monitoring system.</p>
+                <p>Tech: Zabbix, Prometheus, Grafana, OpenSearch.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE SECTION -->
+    <section id="experience" class="py-5 section-spy">
+      <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div>
+          <p class="reveal text-xs uppercase tracking-[0.4em] text-ink-200">Experience</p>
+          <h3 class="reveal delay-100 mt-4 text-2xl font-semibold text-white">Professional Timeline.</h3>
+          <div class="mt-6 space-y-4" id="experience-container">
+            <!-- Experience items injected by JS -->
+          </div>
+        </div>
+        <div>
+          <p class="reveal text-xs uppercase tracking-[0.4em] text-ink-200">Certifications</p>
+          <h3 class="reveal delay-100 mt-4 text-2xl font-semibold text-white">Credentials.</h3>
+          <div class="mt-6 grid gap-4" id="cert-container">
+            <!-- Certifications injected by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="py-20 section-spy">
+      <div>
+        <div class="reveal-scale rounded-3xl border border-white/15 bg-white/10 p-10 text-center">
+          <p class="text-xs uppercase tracking-[0.4em] text-ink-200">Contact</p>
+          <h2 class="reveal delay-100 mt-6 text-3xl font-semibold text-white sm:text-4xl">Let's discuss your infrastructure goals.</h2>
+          <p class="reveal delay-200 mt-4 text-lg text-slate-100/85">Available for Platform Engineering and DevOps opportunities.</p>
+          <div class="reveal delay-300 mt-8 flex flex-wrap items-center justify-center gap-4">
+            <a href="mailto:nattavee.n@nattavee.com" class="rounded-full bg-ink-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-glow transition hover:bg-ink-200">nattavee.n@nattavee.com</a>
+            <a href="https://www.linkedin.com/in/mossnattavee/" target="_blank" class="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/15">LinkedIn</a>
+            <a href="https://github.com/mossZmossZ" target="_blank" class="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/15">GitHub</a>
+            <a href="#top" class="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/60 hover:bg-white/15">Back To Top</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/15 py-10 mt-10">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 text-xs uppercase tracking-[0.3em] text-ink-100">
+      <span>© 2026 Nattavee Narischat</span>
+      <span>Built with HTML & Tailwind CSS</span>
+    </div>
+  </footer>
+
+  <!-- Side Navigation -->
+  <aside class="hidden lg:flex fixed top-1/2 right-6 -translate-y-1/2 flex-col gap-4 side-nav-links">
+    <!-- Items are hardcoded for simplicity matching above sections -->
+    <a href="#top" data-target="top" class="group flex items-center gap-3">
+      <span class="h-3 w-3 rounded-full border transition border-ink-300 bg-ink-400"></span>
+      <span class="text-[10px] uppercase tracking-[0.3em] transition text-ink-200">Overview</span>
+    </a>
+    <a href="#about" data-target="about" class="group flex items-center gap-3">
+      <span class="h-3 w-3 rounded-full border transition border-white/30 bg-transparent"></span>
+      <span class="text-[10px] uppercase tracking-[0.3em] transition text-slate-500">About</span>
+    </a>
+    <a href="#skills" data-target="skills" class="group flex items-center gap-3">
+      <span class="h-3 w-3 rounded-full border transition border-white/30 bg-transparent"></span>
+      <span class="text-[10px] uppercase tracking-[0.3em] transition text-slate-500">Skills</span>
+    </a>
+    <a href="#projects" data-target="projects" class="group flex items-center gap-3">
+      <span class="h-3 w-3 rounded-full border transition border-white/30 bg-transparent"></span>
+      <span class="text-[10px] uppercase tracking-[0.3em] transition text-slate-500">Projects</span>
+    </a>
+    <a href="#experience" data-target="experience" class="group flex items-center gap-3">
+      <span class="h-3 w-3 rounded-full border transition border-white/30 bg-transparent"></span>
+      <span class="text-[10px] uppercase tracking-[0.3em] transition text-slate-500">Experience</span>
+    </a>
+    <a href="#contact" data-target="contact" class="group flex items-center gap-3">
+      <span class="h-3 w-3 rounded-full border transition border-white/30 bg-transparent"></span>
+      <span class="text-[10px] uppercase tracking-[0.3em] transition text-slate-500">Contact</span>
+    </a>
+  </aside>
+
+  <!-- Go to top button -->
+  <a href="#top" id="scroll-to-top" class="fixed bottom-6 right-6 z-50 rounded-full border border-white/30 bg-[#0f2854]/85 px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-soft transition hover:border-white/60 hover:bg-[#1c4d8d]/80 lg:bottom-10 lg:right-10 opacity-0 pointer-events-none">
+    Top
+  </a>
+
+  <!-- JavaScript Behavior -->
+  <script>
+    // Data setup
+    const skills = ["Kubernetes", "Nutanix (NKP)", "VMware (ESXi/vCenter)", "Docker", "Argo CD", "GitHub Actions", "Helm", "Prometheus / Grafana", "Zabbix", "OpenSearch", "Linux / Ubuntu", "Ansible / Kubespray", "FortiGate Firewall", "Cisco Switching", "Cloudflare", "Python / Bash"];
+    const toolchain = ["Kubernetes & Docker", "Nutanix & VMware", "GitOps (Argo CD)", "CI/CD (GitHub Actions)", "Observability (Grafana)", "Network Security", "Cloudflare", "Infrastructure as Code"];
+    const experience = [
+      { role: "Systems Engineer", company: "Zenith Comp Co., Ltd.", period: "04/2025 – Present", detail: "Manage Nutanix/VMware clusters, implement Kubernetes platforms, and improve configuration management for system stability." },
+      { role: "Freelance DevOps", company: "E-learning Platform", period: "07/2025 – 09/2025", detail: "Implemented K3s clusters, private registries (Harbor), and CI/CD pipelines using GitHub Actions and Argo CD." },
+      { role: "IT Support & TA", company: "KMUTNB", period: "07/2024 – 04/2025", detail: "Maintained lab systems, deployed engineering software (ANSYS, CATIA), and designed network infrastructure for student labs." },
+      { role: "Network Engineer Intern", company: "AUSTON ICT Solution", period: "04/2024 – 06/2024", detail: "Executed firewall migrations (FortiGate), configured Cisco infrastructure, and optimized security policies." }
+    ];
+    const certifications = [
+      "Kubernetes and Cloud Native Associate (KCNA)", "Nutanix Certified Professional - Cloud Native 6", "Nutanix Certified Professional - Multicloud Infrastructure 6", "Certified in Cybersecurity (CC) - ISC2", "Fortinet Certified Associate in Cybersecurity"
+    ];
+
+    // Render Data
+    document.querySelector('#skills .mt-10').innerHTML = skills.map((skill, i) => `<span class="reveal rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-slate-100/85" style="transition-delay: \${Math.min(i * 40, 600)}ms">\${skill}</span>`).join('');
+    document.querySelector('#skills .mt-8').innerHTML = toolchain.map((tool, i) => `<div class="reveal rounded-2xl border border-white/15 bg-white/10 p-4" style="transition-delay: \${200 + i * 60}ms"><p class="text-xs uppercase tracking-[0.3em] text-ink-100">Focus Area</p><p class="mt-2 text-sm text-white">\${tool}</p></div>`).join('');
+    document.getElementById('experience-container').innerHTML = experience.map((item, i) => `<div class="reveal rounded-3xl border border-white/15 bg-white/10 p-5" style="transition-delay: \${150 + i * 100}ms"><div class="flex flex-wrap items-center justify-between gap-4"><div><h4 class="text-base font-semibold text-white">\${item.role}</h4><p class="mt-1 text-sm text-slate-100/85">\${item.company}</p></div><span class="text-xs uppercase tracking-[0.3em] text-ink-100">\${item.period}</span></div><p class="mt-3 text-sm text-slate-100/85">\${item.detail}</p></div>`).join('');
+    document.getElementById('cert-container').innerHTML = certifications.map((cert, i) => `<div class="reveal rounded-2xl border border-white/15 bg-white/10 p-4 text-sm text-slate-100/85" style="transition-delay: \${150 + i * 80}ms">\${cert}</div>`).join('');
+
+    // Intersection Observer for Animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale").forEach((el) => {
+      observer.observe(el);
+    });
+
+    // Scroll Spy & Top Button
+    const sections = document.querySelectorAll(".section-spy");
+    const topButton = document.getElementById("scroll-to-top");
+    const navLinks = document.querySelectorAll(".nav-links a");
+    const sideNavLinks = document.querySelectorAll(".side-nav-links a");
+
+    window.addEventListener("scroll", () => {
+      // Scroll to Top visibility
+      if (window.scrollY > 600) {
+        topButton.classList.remove("opacity-0", "pointer-events-none");
+        topButton.classList.add("opacity-100", "pointer-events-auto");
+      } else {
+        topButton.classList.add("opacity-0", "pointer-events-none");
+        topButton.classList.remove("opacity-100", "pointer-events-auto");
+      }
+
+      // Active Section Highlighting
+      let currentId = "top";
+      const mid = window.innerHeight * 0.45;
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= mid) {
+          currentId = section.getAttribute("id");
+        }
+      });
+
+      // Update Nav
+      navLinks.forEach((link) => {
+        if (link.dataset.target === currentId) {
+          link.classList.add("text-white");
+          link.classList.remove("text-slate-400");
+        } else {
+          link.classList.remove("text-white");
+          link.classList.add("text-slate-400");
+        }
+      });
+
+      // Update Side Nav
+      sideNavLinks.forEach((link) => {
+        const dot = link.querySelector("span:first-child");
+        const text = link.querySelector("span:last-child");
+        if (link.dataset.target === currentId) {
+          dot.classList.add("border-ink-300", "bg-ink-400");
+          dot.classList.remove("border-white/30", "bg-transparent");
+          text.classList.add("text-ink-200");
+          text.classList.remove("text-slate-500");
+        } else {
+          dot.classList.remove("border-ink-300", "bg-ink-400");
+          dot.classList.add("border-white/30", "bg-transparent");
+          text.classList.remove("text-ink-200");
+          text.classList.add("text-slate-500");
+        }
+      });
+    }, { passive: true });
+    
+    // Initial trigger
+    window.dispatchEvent(new Event('scroll'));
+  </script>
+</body>
+</html>

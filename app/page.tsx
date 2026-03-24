@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 // Contact Information
 const CONTACT_EMAIL = "nattavee.n@nattavee.com";
 const SOCIAL_LINKS = {
-  linkedin: "https://linkedin.com/in/mossnattavee",
+  linkedin: "https://www.linkedin.com/in/mossnattavee/",
   github: "https://github.com/mossZmossZ",
   portfolio: "https://portfolio.nattavee.com",
   email: "mailto:nattavee.n@nattavee.com",
