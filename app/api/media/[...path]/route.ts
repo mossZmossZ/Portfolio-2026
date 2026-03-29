@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { resolveMediaUrl } from "../../../../lib/media-catalog";
 
+function withSecurityHeaders(response: NextResponse) {
+  response.headers.set("Cache-Control", "no-store");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  return response;
+}
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ path: string[] }> }
@@ -9,28 +15,19 @@ export async function GET(
   const pathSegments = resolvedParams.path || [];
   const pathKey = pathSegments.join("/");
 
-  const { url, envKey } = resolveMediaUrl(pathKey);
+  const { url } = resolveMediaUrl(pathKey);
 
   if (!url) {
-    return NextResponse.json(
+    return withSecurityHeaders(NextResponse.json(
       {
-        error: "Media key not found",
-        key: pathKey
+        error: "Media asset not available"
       },
       { status: 404 }
-    );
+    ));
   }
 
-  if (!url.startsWith("http://") && !url.startsWith("https://")) {
-    return NextResponse.json(
-      {
-        error: "Invalid media URL",
-        key: pathKey,
-        expectedEnv: envKey
-      },
-      { status: 500 }
-    );
-  }
+  const response = NextResponse.redirect(url);
+  response.headers.set("Vary", "Accept");
 
-  return NextResponse.redirect(url);
+  return withSecurityHeaders(response);
 }
