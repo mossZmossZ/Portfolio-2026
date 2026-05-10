@@ -9,6 +9,8 @@ out
 .DS_Store
 *.pem
 
+# AI
+.claude
 # debug
 npm-debug.log*
 yarn-debug.log*

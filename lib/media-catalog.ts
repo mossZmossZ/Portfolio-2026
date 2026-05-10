@@ -59,7 +59,7 @@ export const mediaCatalog: Record<string, MediaItem> = {
   },
   "certifications/cc-isc2": {
     envKey: "CERT_IMAGE_CC_ISC2_URL",
-    fallbackUrl: "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80"
+    fallbackUrl: "https://s3.nattavee.com/resume/digitalcert-isc2cc-1.png"
   },
   "certifications/fortinet-fca": {
     envKey: "CERT_IMAGE_FORTINET_FCA_URL",
@@ -71,7 +71,7 @@ export const mediaCatalog: Record<string, MediaItem> = {
   },
   "projects/monitoring": {
     envKey: "PROJECT_IMAGE_MONITORING_URL",
-    fallbackUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1800&q=80"
+    fallbackUrl: "https://s3.nattavee.com/resume/Picture2.png"
   },
   "projects/homelab": {
     envKey: "PROJECT_IMAGE_HOMELAB_URL",

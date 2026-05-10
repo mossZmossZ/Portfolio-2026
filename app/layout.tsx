@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
@@ -17,8 +17,13 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "Nattavee Narischat | Portfolio",
-  description:
-    "Nattavee Narischat's Portfolio"
+  description: "Nattavee Narischat's Portfolio"
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover"
 };
 
 export default function RootLayout({
