@@ -234,7 +234,7 @@ function Modal({ item, onClose }: { item: ModalData; onClose: () => void }) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label={item.data.title}
+      aria-label={item.type === "experience" ? item.data.role : item.data.title}
     >
       <div
         ref={boxRef}
