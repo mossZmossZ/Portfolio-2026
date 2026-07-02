@@ -45,6 +45,10 @@ export const mediaCatalog: Record<string, MediaItem> = {
     envKey: "PROFILE_IMAGE_URL",
     fallbackUrl: "https://s3.nattavee.com/resume/nattavee.JPG"
   },
+  "certifications/ckad": {
+    envKey: "CERT_IMAGE_CKAD_URL",
+    fallbackUrl: "https://s3.nattavee.com/resume/CKAD-Nattavee_page-0001.jpg"
+  },
   "certifications/kcna": {
     envKey: "CERT_IMAGE_KCNA_URL",
     fallbackUrl: "https://s3.nattavee.com/resume/Kubernetes%20and%20Cloud%20Native%20Associate%20jpeg.jpg"
