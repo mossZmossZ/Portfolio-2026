@@ -10,9 +10,9 @@ const SOCIAL_LINKS = {
 };
 
 const impactHighlights = [
-  { title: "1+ Years", subtitle: "Production Infrastructure" },
-  { title: "6 Certs",  subtitle: "Kubernetes, Nutanix, Security" },
-  { title: "Apr 2024", subtitle: "Career Started" }
+  { title: "1+ yrs",   subtitle: "Production Infrastructure" },
+  { title: "6",        subtitle: "Certifications — K8s, Nutanix, Security" },
+  { title: "Apr '24",  subtitle: "Career Started" }
 ];
 
 const capabilities = [
@@ -51,9 +51,9 @@ const capabilities = [
 ];
 
 const skillGroups = [
-  { label: "Platform",               items: ["Kubernetes", "Nutanix", "VMware", "Docker", "Helm"] },
-  { label: "Delivery",               items: ["Argo CD", "GitHub Actions", "Ansible", "Python", "Bash"] },
-  { label: "Observability & Network",items: ["Prometheus", "Grafana", "OpenSearch", "FortiGate", "Cisco", "Cloudflare"] }
+  { label: "Platform",                items: ["Kubernetes", "Nutanix", "VMware", "Docker", "Helm"] },
+  { label: "Delivery",                items: ["Argo CD", "GitHub Actions", "Ansible", "Python", "Bash"] },
+  { label: "Observability & Network", items: ["Prometheus", "Grafana", "OpenSearch", "FortiGate", "Cisco", "Cloudflare"] }
 ];
 
 const projects = [
@@ -139,12 +139,12 @@ const experience = [
 ];
 
 const certifications = [
-  { title: "CKAD",                           image: "/api/media/certifications/ckad" },
-  { title: "KCNA",                           image: "/api/media/certifications/kcna" },
-  { title: "NCP Cloud Native 6",             image: "/api/media/certifications/ncp-cn6" },
-  { title: "NCP Multicloud Infrastructure 6",image: "/api/media/certifications/ncp-mci6" },
-  { title: "ISC2 CC",                        image: "/api/media/certifications/cc-isc2" },
-  { title: "Fortinet FCA",                   image: "/api/media/certifications/fortinet-fca" }
+  { title: "CKAD",                            image: "/api/media/certifications/ckad" },
+  { title: "KCNA",                            image: "/api/media/certifications/kcna" },
+  { title: "NCP Cloud Native 6",              image: "/api/media/certifications/ncp-cn6" },
+  { title: "NCP Multicloud Infrastructure 6", image: "/api/media/certifications/ncp-mci6" },
+  { title: "ISC2 CC",                         image: "/api/media/certifications/cc-isc2" },
+  { title: "Fortinet FCA",                    image: "/api/media/certifications/fortinet-fca" }
 ];
 
 /* ── Types ─────────────────────────────────────── */
@@ -157,26 +157,51 @@ type ModalData      =
   | { type: "experience"; data: ExperienceItem };
 
 type Topic = "projects" | "experience" | "certifications" | "contact";
+type Kind  = "intro" | Topic | "fallback";
 type Turn =
   | { id: string; role: "user"; text: string }
-  | { id: string; role: "assistant"; kind: "intro" | Topic };
+  | { id: string; role: "assistant"; kind: Kind };
 
 const topicChips: { id: Topic; label: string; question: string }[] = [
   { id: "projects",       label: "Show me your projects",        question: "Show me your projects" },
   { id: "experience",     label: "What's your work experience?", question: "What's your work experience?" },
-  { id: "certifications", label: "Any certifications?",           question: "Any certifications?" },
-  { id: "contact",        label: "How can I reach you?",          question: "How can I reach you?" }
+  { id: "certifications", label: "Any certifications?",          question: "Any certifications?" },
+  { id: "contact",        label: "How can I reach you?",         question: "How can I reach you?" }
 ];
 
-const leadText: Record<"intro" | Topic, string> = {
+const leadText: Record<Kind, string> = {
   intro: "Hi, I'm Moss Nattavee — a Systems Engineer based in Bangkok, Thailand. I've spent 1+ years managing production infrastructure with Kubernetes, Nutanix, and VMware, and I'm especially into DevOps, GitOps, and cloud-native reliability. I started as a network intern in April 2024 and have been climbing the infrastructure stack ever since.",
   projects: "Here are a few things I've shipped recently:",
   experience: "Here's where I've worked and what I did along the way:",
   certifications: "I've picked up a few certifications along the way:",
-  contact: "I'm open to platform, DevOps, and infrastructure engineering opportunities — here's how to reach me:"
+  contact: "I'm open to platform, DevOps, and infrastructure engineering opportunities — here's how to reach me:",
+  fallback: "I don't have a runbook for that one yet — but these commands always exit 0:"
 };
 
-/* ── Expand icon ─────────────────────────────────── */
+const commandFor: Record<Kind, { cmd: string; result: string }> = {
+  intro:          { cmd: "whoami --verbose",                 result: "identity resolved" },
+  projects:       { cmd: "kubectl get projects -o wide",     result: "3 resources found" },
+  experience:     { cmd: "journalctl -u career --since 2024", result: "5 entries" },
+  certifications: { cmd: "ls ~/certs | verify --issuer all", result: "6/6 verified" },
+  contact:        { cmd: "ping moss --channels all",         result: "3 channels open" },
+  fallback:       { cmd: "grep -ri \"$QUERY\" ./runbooks",   result: "no exact match" }
+};
+
+function matchTopic(query: string): Topic | "intro" | null {
+  const s = query.toLowerCase();
+  if (/cert|ckad|kcna|isc2|fortinet|exam|badge/.test(s)) return "certifications";
+  if (/project|built|build|ship|homelab|monitor|gitops|deploy/.test(s)) return "projects";
+  if (/experience|work|job|career|company|role|history|resume|cv/.test(s)) return "experience";
+  if (/contact|email|reach|hire|hiring|linkedin|github|connect|talk/.test(s)) return "contact";
+  if (/\b(who|about|yourself|intro|skills?|stack|moss|nattavee)\b/.test(s)) return "intro";
+  return null;
+}
+
+function projectPath(project: ProjectItem) {
+  return `~/projects/${project.image.split("/").pop()}`;
+}
+
+/* ── Icons ───────────────────────────────────────── */
 function ExpandIcon() {
   return (
     <span className="expand-icon" aria-hidden="true">
@@ -187,7 +212,6 @@ function ExpandIcon() {
   );
 }
 
-/* ── Close icon ──────────────────────────────────── */
 function CloseIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -229,6 +253,7 @@ function Modal({ item, onClose }: { item: ModalData; onClose: () => void }) {
 
         {item.type === "cert" && (
           <>
+            <div className="modal-path-bar" aria-hidden="true">~/certs/{item.data.title.toLowerCase().replace(/\s+/g, "-")}</div>
             <div className="modal-img-wrap">
               <img src={item.data.image} alt={item.data.title} className="modal-img" />
             </div>
@@ -241,14 +266,9 @@ function Modal({ item, onClose }: { item: ModalData; onClose: () => void }) {
 
         {item.type === "project" && (
           <>
-            <div className="modal-browser">
-              <div className="browser-bar">
-                <span className="dot" /><span className="dot" /><span className="dot" />
-                <span className="modal-browser-label">{item.data.title.toLowerCase().replace(/\s+/g, "-")}</span>
-              </div>
-              <div className="modal-img-wrap">
-                <img src={item.data.image} alt={item.data.title} className="modal-img" />
-              </div>
+            <div className="modal-path-bar" aria-hidden="true">{projectPath(item.data)}</div>
+            <div className="modal-img-wrap">
+              <img src={item.data.image} alt={item.data.title} className="modal-img" />
             </div>
             <div className="modal-body">
               <span className="proj-tag">{item.data.tag}</span>
@@ -276,6 +296,44 @@ function Modal({ item, onClose }: { item: ModalData; onClose: () => void }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ── Tool call: the assistant "runs" a command ───── */
+function ToolCall({ cmd, result, onDone }: { cmd: string; result: string; onDone: () => void }) {
+  const [typed, setTyped] = useState("");
+  const [state, setState] = useState<"typing" | "running" | "done">("typing");
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      setTyped(cmd);
+      setState("done");
+      onDone();
+      return;
+    }
+    let i = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    const id = setInterval(() => {
+      i += 1;
+      setTyped(cmd.slice(0, i));
+      if (i >= cmd.length) {
+        clearInterval(id);
+        setState("running");
+        timer = setTimeout(() => { setState("done"); onDone(); }, 750);
+      }
+    }, 22);
+    return () => { clearInterval(id); clearTimeout(timer); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="tool-call" data-state={state}>
+      <span className="tool-prompt" aria-hidden="true">$</span>
+      <code className="tool-cmd">{typed}</code>
+      {state === "running" && <span className="tool-spinner" role="status" aria-label="Running" />}
+      {state === "done" && <span className="tool-result">✓ {result}</span>}
     </div>
   );
 }
@@ -321,7 +379,7 @@ function IntroExtra() {
     <div className="msg-extra">
       <div className="stats-block">
         {impactHighlights.map((item) => (
-          <div key={item.title} className="stat-card">
+          <div key={item.subtitle} className="stat-card">
             <p className="stat-val">{item.title}</p>
             <p className="stat-sub">{item.subtitle}</p>
           </div>
@@ -373,17 +431,17 @@ function ProjectsExtra({ onOpen }: { onOpen: (data: ModalData) => void }) {
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onOpen({ type: "project", data: project }); }}
           >
             <div className="project-preview">
-              <div className="browser-bar">
-                <span className="dot" /><span className="dot" /><span className="dot" />
+              <div className="path-bar">
+                <span className="path-text">{projectPath(project)}</span>
+                <span className="proj-tag">{project.tag}</span>
               </div>
               <img src={project.image} alt={project.title} className="project-img" width={640} height={170} />
             </div>
             <div className="project-meta">
-              <span className="proj-tag">{project.tag}</span>
               <h3 className="proj-title">{project.title}</h3>
               <p className="proj-desc">{project.summary}</p>
               <p className="proj-stack">{project.stack}</p>
-              <p className="view-hint">Click to view details ↗</p>
+              <p className="view-hint">Open details ↗</p>
             </div>
             <ExpandIcon />
           </article>
@@ -417,7 +475,7 @@ function ExperienceExtra({ onOpen }: { onOpen: (data: ModalData) => void }) {
               <ExpandIcon />
             </div>
             <p className="exp-detail">{item.detail}</p>
-            <p className="exp-view-hint">View full details →</p>
+            <p className="exp-view-hint">Open full log →</p>
           </article>
         ))}
       </div>
@@ -457,9 +515,24 @@ function ContactExtra() {
   return (
     <div className="msg-extra">
       <div className="contact-actions">
-        <a href={SOCIAL_LINKS.email} className="btn-primary">Email Me</a>
+        <a href={SOCIAL_LINKS.email} className="btn-primary">Email me</a>
         <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="btn-outline">LinkedIn</a>
         <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer" className="btn-outline">GitHub</a>
+      </div>
+    </div>
+  );
+}
+
+/* ── Fallback reply content ──────────────────────── */
+function FallbackExtra({ onAsk }: { onAsk: (topic: Topic) => void }) {
+  return (
+    <div className="msg-extra">
+      <div className="fallback-chips">
+        {topicChips.map((chip) => (
+          <button key={chip.id} type="button" className="prompt-chip" onClick={() => onAsk(chip.id)}>
+            <span className="chip-caret" aria-hidden="true">❯</span> {chip.label}
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -474,32 +547,72 @@ function UserMessage({ text }: { text: string }) {
   );
 }
 
-/* ── Assistant message bubble ────────────────────── */
+/* ── Assistant message ───────────────────────────── */
 function AssistantMessage({
   turn,
   onDone,
-  onOpenModal
+  onOpenModal,
+  onAsk
 }: {
   turn: Extract<Turn, { role: "assistant" }>;
   onDone: (id: string) => void;
   onOpenModal: (data: ModalData) => void;
+  onAsk: (topic: Topic) => void;
 }) {
-  const [revealed, setRevealed] = useState(false);
+  const [phase, setPhase] = useState<"tool" | "stream" | "done">("tool");
+  const command = commandFor[turn.kind];
 
   return (
     <div className="msg-row msg-row--assistant">
-      <img src="/api/media/profile" alt="Nattavee Narischat" width={32} height={32} className="msg-avatar" />
-      <div className="msg-bubble msg-bubble--assistant">
-        <p className="msg-text">
-          <StreamText text={leadText[turn.kind]} onDone={() => { setRevealed(true); onDone(turn.id); }} />
-        </p>
-        {revealed && turn.kind === "intro" && <IntroExtra />}
-        {revealed && turn.kind === "projects" && <ProjectsExtra onOpen={onOpenModal} />}
-        {revealed && turn.kind === "experience" && <ExperienceExtra onOpen={onOpenModal} />}
-        {revealed && turn.kind === "certifications" && <CertificationsExtra onOpen={onOpenModal} />}
-        {revealed && turn.kind === "contact" && <ContactExtra />}
+      <img src="/api/media/profile" alt="Nattavee Narischat" width={36} height={36} className="msg-avatar" />
+      <div className="msg-col">
+        <p className="msg-meta">moss · bangkok</p>
+        <div className="msg-bubble msg-bubble--assistant">
+          <ToolCall
+            cmd={command.cmd}
+            result={command.result}
+            onDone={() => setPhase((p) => (p === "tool" ? "stream" : p))}
+          />
+          {phase !== "tool" && (
+            <p className="msg-text">
+              <StreamText text={leadText[turn.kind]} onDone={() => { setPhase("done"); onDone(turn.id); }} />
+            </p>
+          )}
+          {phase === "done" && turn.kind === "intro" && <IntroExtra />}
+          {phase === "done" && turn.kind === "projects" && <ProjectsExtra onOpen={onOpenModal} />}
+          {phase === "done" && turn.kind === "experience" && <ExperienceExtra onOpen={onOpenModal} />}
+          {phase === "done" && turn.kind === "certifications" && <CertificationsExtra onOpen={onOpenModal} />}
+          {phase === "done" && turn.kind === "contact" && <ContactExtra />}
+          {phase === "done" && turn.kind === "fallback" && <FallbackExtra onAsk={onAsk} />}
+        </div>
       </div>
     </div>
+  );
+}
+
+/* ── Live Bangkok clock ──────────────────────────── */
+function StatusClock() {
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fmt = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Bangkok",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+    const tick = () => setTime(fmt.format(new Date()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <span className="status-cluster">
+      <span className="status-dot" aria-hidden="true" />
+      <span className="status-label">online</span>
+      {time && <span className="status-time">BKK {time}</span>}
+    </span>
   );
 }
 
@@ -514,10 +627,11 @@ export default function Home() {
   const [modal, setModal] = useState<ModalData | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showTop, setShowTop] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [draft, setDraft] = useState("");
 
   const threadEndRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useRef(true);
+  const turnCounter = useRef(0);
 
   const openModal  = useCallback((data: ModalData) => setModal(data), []);
   const closeModal = useCallback(() => setModal(null), []);
@@ -529,11 +643,8 @@ export default function Home() {
 
   useEffect(() => {
     const onScroll = () => {
-      const y     = window.scrollY;
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      setIsScrolled(y > 20);
-      setShowTop(y > 500);
-      setScrollProgress(total > 0 ? (y / total) * 100 : 0);
+      setIsScrolled(window.scrollY > 20);
+      setShowTop(window.scrollY > 500);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -549,18 +660,38 @@ export default function Home() {
     setActiveStream((cur) => (cur === turnId ? null : cur));
   }, []);
 
+  const pushTurns = (question: string, kind: Kind) => {
+    const n = turnCounter.current++;
+    const aid = `a-${kind}-${n}`;
+    setTurns((prev) => [
+      ...prev,
+      { id: `u-${kind}-${n}`, role: "user", text: question },
+      { id: aid, role: "assistant", kind }
+    ]);
+    setActiveStream(aid);
+  };
+
   const askTopic = (topic: Topic) => {
     if (activeStream) return;
     const chip = topicChips.find((c) => c.id === topic)!;
-    const uid = `u-${topic}`;
-    const aid = `a-${topic}`;
-    setTurns((prev) => [
-      ...prev,
-      { id: uid, role: "user", text: chip.question },
-      { id: aid, role: "assistant", kind: topic }
-    ]);
-    setAskedTopics((prev) => [...prev, topic]);
-    setActiveStream(aid);
+    pushTurns(chip.question, topic);
+    setAskedTopics((prev) => (prev.includes(topic) ? prev : [...prev, topic]));
+  };
+
+  const submitDraft = (e: React.FormEvent) => {
+    e.preventDefault();
+    const question = draft.trim();
+    if (!question || activeStream) return;
+    setDraft("");
+    const matched = matchTopic(question);
+    if (matched === null) {
+      pushTurns(question, "fallback");
+      return;
+    }
+    if (matched !== "intro") {
+      setAskedTopics((prev) => (prev.includes(matched) ? prev : [...prev, matched]));
+    }
+    pushTurns(question, matched);
   };
 
   const remainingChips = topicChips.filter((c) => !askedTopics.includes(c.id));
@@ -568,34 +699,36 @@ export default function Home() {
 
   return (
     <div>
-      <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} aria-hidden="true" />
-
       <header className={`chat-header ${isScrolled ? "chat-header--scrolled" : ""}`}>
-        <div className="shell flex items-center justify-between">
+        <div className="shell header-inner">
           <a href="#top" className="brand">
-            Nattavee.N<span className="brand-dot">.</span>
+            <span>nattavee<span className="brand-dot">.</span>n</span>
+            <span className="brand-badge">sys-console</span>
           </a>
-          <div className="social-row">
-            <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer"
-               className="social-btn" aria-label="LinkedIn">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z" />
-                <circle cx="4" cy="4" r="2" />
-              </svg>
-            </a>
-            <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer"
-               className="social-btn" aria-label="GitHub">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-              </svg>
-            </a>
-            <a href={SOCIAL_LINKS.email} className="social-btn" aria-label="Email">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"
-                   strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="4" width="20" height="16" rx="2" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-            </a>
+          <div className="header-right">
+            <StatusClock />
+            <div className="social-row">
+              <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer"
+                 className="social-btn" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+              <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer"
+                 className="social-btn" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                </svg>
+              </a>
+              <a href={SOCIAL_LINKS.email} className="social-btn" aria-label="Email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"
+                     strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </header>
@@ -605,30 +738,48 @@ export default function Home() {
           {turns.map((turn) =>
             turn.role === "user"
               ? <UserMessage key={turn.id} text={turn.text} />
-              : <AssistantMessage key={turn.id} turn={turn} onDone={handleStreamDone} onOpenModal={openModal} />
+              : <AssistantMessage key={turn.id} turn={turn} onDone={handleStreamDone} onOpenModal={openModal} onAsk={askTopic} />
           )}
-          <div ref={threadEndRef} />
+          <div ref={threadEndRef} className="thread-end" />
         </div>
-
-        {activeStream === null && remainingChips.length > 0 && (
-          <div className="prompt-chips" role="group" aria-label="Suggested questions">
-            {remainingChips.map((chip) => (
-              <button
-                key={chip.id}
-                type="button"
-                className="prompt-chip"
-                onClick={() => askTopic(chip.id)}
-              >
-                {chip.label}
-              </button>
-            ))}
-          </div>
-        )}
       </main>
 
-      <footer>
-        <div className="shell">&copy; 2026 Nattavee Narischat</div>
-      </footer>
+      <div className="dock">
+        <div className="shell dock-inner">
+          {activeStream === null && remainingChips.length > 0 && (
+            <div className="prompt-chips" role="group" aria-label="Suggested questions">
+              {remainingChips.map((chip) => (
+                <button
+                  key={chip.id}
+                  type="button"
+                  className="prompt-chip"
+                  onClick={() => askTopic(chip.id)}
+                >
+                  <span className="chip-caret" aria-hidden="true">❯</span> {chip.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <form className="input-bar" onSubmit={submitDraft}>
+            <span className="input-caret" aria-hidden="true">❯</span>
+            <input
+              type="text"
+              className="input-field"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder='Ask about my work — try "projects" or "certs"'
+              aria-label="Ask a question"
+              maxLength={120}
+            />
+            <button type="submit" className="input-send" disabled={activeStream !== null || !draft.trim()}>
+              Ask
+            </button>
+          </form>
+
+          <p className="dock-footer">© 2026 Nattavee Narischat · Bangkok, TH</p>
+        </div>
+      </div>
 
       <button
         onClick={() => scrollTo("top")}

@@ -1,29 +1,38 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["500", "600", "700"],
+  variable: "--font-display"
+});
+
+const sans = Instrument_Sans({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-sans"
 });
 
-const plexMono = IBM_Plex_Mono({
+const mono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
   display: "swap",
+  weight: ["400", "500", "600"],
   variable: "--font-mono"
 });
 
 export const metadata: Metadata = {
   title: "Nattavee Narischat | Portfolio",
-  description: "Nattavee Narischat's Portfolio"
+  description:
+    "Moss Nattavee — Systems Engineer in Bangkok. Kubernetes, Nutanix, GitOps and platform reliability. Ask the console."
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  viewportFit: "cover"
+  viewportFit: "cover",
+  themeColor: "#ffffff"
 };
 
 export default function RootLayout({
@@ -32,8 +41,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${plexMono.variable}`}>
-      <body className="font-sans antialiased">
+    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+      <body className="antialiased">
         {children}
       </body>
     </html>
